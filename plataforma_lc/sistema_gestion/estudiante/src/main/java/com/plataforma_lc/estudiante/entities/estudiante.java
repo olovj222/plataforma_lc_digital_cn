@@ -10,10 +10,10 @@ package com.plataforma_lc.estudiante.entities;
  * @author Olov
  */
 
-@Data
-@Entity
 public class estudiante {
     private Long id;
     private String nombre;
+    
+    
 
 }
