@@ -1,13 +1,13 @@
-package com.plataforma_lc.sistema_gestion;
+package com.plataforma_lc.estudiantes;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SistemaGestionApplication {
+public class EstudiantesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SistemaGestionApplication.class, args);
+		SpringApplication.run(EstudiantesApplication.class, args);
 	}
 
 }
