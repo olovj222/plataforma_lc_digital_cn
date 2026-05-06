@@ -50,7 +50,7 @@ public class EstudianteRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable("id") Long id) throws EstudianteRuleException {
+    public ResponseEntity<?> get(@PathVariable("id") Long id) {
         Optional<Estudiante> optionalEstudiante = estudianteRepository.findById(id);
 
         if (optionalEstudiante.isPresent()) {
@@ -71,16 +71,15 @@ public class EstudianteRestController {
 
                     if (curso != null) {
                         EstudianteCurso cursoRespuesta = new EstudianteCurso();
-                        cursoRespuesta.setCursoName(curso.getName());
+                        cursoRespuesta.setCursoName(curso.getNombre());
                         cursoRespuesta.setCursoId(curso.getId());
                         cursosNombres.add(cursoRespuesta);
                     }
                 }
             } catch (Exception ex) {
                 // Excepción personalizada del módulo Estudiante
-                throw new EstudianteRuleException("6010", 
-                        HttpStatus.PRECONDITION_FAILED, 
-                        "Error al consultar microservicio de Cursos: Servicio no disponible");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error al consultar microservicio de Cursos: " + ex.getMessage());
             }
             
             estudiante.setCursos(cursosNombres);
