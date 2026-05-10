@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>estudiante</module>
+        <module>curso</module>
     </modules>
     <dependencies>
         <!-- Dependencias que quieras que hereden los hijos de businessdomain -->
