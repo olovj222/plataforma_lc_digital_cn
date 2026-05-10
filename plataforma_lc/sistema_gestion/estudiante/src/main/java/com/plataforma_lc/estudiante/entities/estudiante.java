@@ -7,7 +7,6 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,11 +37,10 @@ public class Estudiante {
     private String direccion;
     private String telefono;
 
-    // --- Nuevos campos para cumplir tus reglas de negocio ---
 
     @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    @ToString.Exclude // ¡Muy importante! Lee la nota abajo
+    @ToString.Exclude 
     private List<EstudianteCurso> cursos;
 
     @ElementCollection
