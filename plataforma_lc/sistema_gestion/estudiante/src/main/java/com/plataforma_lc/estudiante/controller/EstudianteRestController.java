@@ -39,59 +39,77 @@ public class EstudianteRestController {
     @Autowired
     private WebClient.Builder webClientBuilder;
     
-    @GetMapping()
-    public ResponseEntity<List<Estudiante>> list() {
-        List<Estudiante> findAll = estudianteRepository.findAll();
-        if (findAll.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.ok(findAll);
+    @GetMapping
+    public ResponseEntity<List<Estudiante>> listarTodos() {
+    // 1. Traemos todos los estudiantes de la base de datos
+    List<Estudiante> estudiantes = (List<Estudiante>) estudianteRepository.findAll();
+
+    // 2. Recorremos cada estudiante
+    for (Estudiante estudiante : estudiantes) {
+        // 3. Recorremos los cursos de ese estudiante
+        for (EstudianteCurso relacion : estudiante.getCursos()) {
+            try {
+                // Hacemos la llamada al microservicio
+                CursoResponse cursoRespuesta = webClientBuilder.build()
+                        .get()
+                        .uri("http://localhost:8081/curso/{id}", relacion.getCursoId())
+                        .retrieve()
+                        .bodyToMono(CursoResponse.class)
+                        .block();
+
+                if (cursoRespuesta != null) {
+                    relacion.setCursoName(cursoRespuesta.getNombre());
+                }
+            } catch (Exception ex) {
+                // Manejo de error si el MS está apagado
+                relacion.setCursoName("Información no disponible (MS apagado)");
+            }
         }
     }
+
+    // 4. Devolvemos la lista ya rellenada
+    return new ResponseEntity<>(estudiantes, HttpStatus.OK);
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable("id") Long id) {
-        Optional<Estudiante> optionalEstudiante = estudianteRepository.findById(id);
+    Optional<Estudiante> optionalEstudiante = estudianteRepository.findById(id);
 
-        if (optionalEstudiante.isPresent()) {
-            Estudiante estudiante = optionalEstudiante.get();
-            List<EstudianteCurso> cursosNombres = new ArrayList<>();
+    if (optionalEstudiante.isPresent()) {
+        Estudiante estudiante = optionalEstudiante.get();
 
+        // Iteramos sobre la relación EstudianteCurso
+        for (EstudianteCurso relacion : estudiante.getCursos()) {
             try {
-                // Iteramos sobre la relación EstudianteCurso para obtener detalles del microservicio de Cursos
-                for (EstudianteCurso relacion : estudiante.getCursos()) {
-                    
-                    // Llamada al microservicio de CURSOS (ajusta el nombre del servicio en el Discovery Server)
-                    CursoResponse curso = webClientBuilder.build()
-                            .get()
-                            .uri("http://MS-CURSOS/curso/{id}", relacion.getCursoId())
-                            .retrieve()
-                            .bodyToMono(CursoResponse.class)
-                            .block(); // Bloqueante para simplificar la lógica igual al ejemplo
+                // Intentamos buscar el nombre del curso
+                CursoResponse cursoRespuesta = webClientBuilder.build()
+                        .get()
+                        .uri("http://localhost:8081/curso/{id}", relacion.getCursoId())
+                        .retrieve()
+                        .bodyToMono(CursoResponse.class)
+                        .block(); 
 
-                    if (curso != null) {
-                        EstudianteCurso cursoRespuesta = new EstudianteCurso();
-                        cursoRespuesta.setCursoName(curso.getNombre());
-                        cursoRespuesta.setCursoId(curso.getId());
-                        cursosNombres.add(cursoRespuesta);
-                    }
+                if (cursoRespuesta != null) {
+                    relacion.setCursoName(cursoRespuesta.getNombre());
                 }
             } catch (Exception ex) {
-                // Excepción personalizada del módulo Estudiante
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error al consultar microservicio de Cursos: " + ex.getMessage());
+                // Si este curso en particular falla (o el MS está apagado),
+                // manejamos el error SOLAMENTE para este registro, sin botar la app.
+                relacion.setCursoName("Información no disponible (MS apagado)");
             }
-            
-            estudiante.setCursos(cursosNombres);
-            return new ResponseEntity<>(estudiante, HttpStatus.OK);
-            
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        
+        // Retornamos SIEMPRE al estudiante. Si el MS de cursos estaba encendido, 
+        // tendrá los nombres reales. Si estaba apagado, tendrá el texto de advertencia.
+        return new ResponseEntity<>(estudiante, HttpStatus.OK);
+        
+    } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+}
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> put(@PathVariable Long id, @RequestBody Estudiante input) {
+    public ResponseEntity<?> put(@PathVariable("id") Long id, @RequestBody Estudiante input) {
         Optional<Estudiante> optionalEstudiante = estudianteRepository.findById(id);
 
         if (optionalEstudiante.isPresent()) {
@@ -120,7 +138,7 @@ public class EstudianteRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         estudianteRepository.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
