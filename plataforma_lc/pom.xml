@@ -8,6 +8,7 @@
     <modules>
         <module>sistema_gestion</module>
         <module>sistema_infra</module>
+        <module>sistema_gestion/evaluaciones</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

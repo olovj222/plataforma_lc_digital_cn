@@ -14,8 +14,6 @@ import java.util.List;
  * @author juako
  */
 public interface evaluacionesRepository extends JpaRepository<evaluaciones, Long> {
-        List<evaluaciones> findByCurso(String curso);
-
-        List<evaluaciones> findByEstudianteId(Long estudianteId);
-    
+    List<evaluaciones> findByCursoId(Long cursoId);
+    List<evaluaciones> findByEstudianteId(Long estudianteId);
 }

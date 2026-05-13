@@ -4,66 +4,33 @@
  */
 package com.plataforma_lc.evaluaciones.entities;
 
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 /**
  *
  * @author juako
  */
+@Data
 @Entity
 public class evaluaciones {
-        @Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre de la evaluación es obligatorio")
     private String nombre;
-    private String curso;
 
-    private int calificacion; 
+    @NotNull(message = "El curso es obligatorio")
+    private Long cursoId;  // ← cambia de String curso a Long cursoId
 
-    private Long estudianteId; 
+    @NotNull(message = "El estudiante es obligatorio")
+    private Long estudianteId;
 
-    public evaluaciones() {}  //getters and setters
+    private int calificacion;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getCurso() {
-        return curso;
-    }
-
-    public void setCurso(String curso) {
-        this.curso = curso;
-    }
-
-    public int getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(int calificacion) {
-        this.calificacion = calificacion;
-    }
-
-    public Long getEstudianteId() {
-        return estudianteId;
-    }
-
-    public void setEstudianteId(Long estudianteId) {
-        this.estudianteId = estudianteId;
-    }
-    
-    
+    @Transient
+    private String cursoNombre;  // ← nuevo, no se guarda en BD
 }
