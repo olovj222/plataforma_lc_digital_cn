@@ -4,7 +4,7 @@
  */
 package com.plataforma_lc.evaluaciones.controller;
 
-import com.plataforma_lc.evaluaciones.entities.evaluaciones;
+import com.plataforma_lc.evaluaciones.entities.Evaluaciones;
 import com.plataforma_lc.evaluaciones.service.evaluacionesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,12 +24,12 @@ public class evaluacionesController {
     private evaluacionesService service;
 
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody evaluaciones e) {
+    public ResponseEntity<?> crear(@RequestBody Evaluaciones e) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(e));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody evaluaciones e) {
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Evaluaciones e) {
         try {
             return ResponseEntity.ok(service.actualizar(id, e));
         } catch (RuntimeException ex) {
@@ -38,7 +38,7 @@ public class evaluacionesController {
     }
 
     @GetMapping("/curso/{cursoId}")
-    public List<evaluaciones> porCurso(@PathVariable Long cursoId) {
+    public List<Evaluaciones> porCurso(@PathVariable Long cursoId) {
         return service.porCurso(cursoId);
     }
 
@@ -52,7 +52,7 @@ public class evaluacionesController {
     }
 
     @GetMapping("/estudiante/{id}")
-    public List<evaluaciones> porEstudiante(@PathVariable Long id) {
+    public List<Evaluaciones> porEstudiante(@PathVariable Long id) {
         return service.porEstudiante(id);
     }
 }

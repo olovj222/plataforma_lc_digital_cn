@@ -6,14 +6,14 @@ package com.plataforma_lc.evaluaciones.service;
 
 
 import com.plataforma_lc.evaluaciones.entities.CursoResponse;
-import com.plataforma_lc.evaluaciones.entities.evaluaciones;
+import com.plataforma_lc.evaluaciones.entities.Evaluaciones;
 import com.plataforma_lc.evaluaciones.repository.evaluacionesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import java.util.List;
+
 
 import java.util.List;
+import org.springframework.web.client.RestTemplate;
 /**
  *
  * @author juako
@@ -24,68 +24,64 @@ public class evaluacionesService {
     @Autowired
     private evaluacionesRepository repo;
 
-    @Autowired
-    private WebClient.Builder webClientBuilder;
+@Autowired
+private RestTemplate restTemplate;
 
-    // Método helper para obtener nombre del curso desde MS Curso
-    private void rellenarNombreCurso(evaluaciones e) {
-        try {
-            CursoResponse curso = webClientBuilder.build()
-                    .get()
-                    .uri("http://localhost:8081/curso/{id}", e.getCursoId())
-                    .retrieve()
-                    .bodyToMono(CursoResponse.class)
-                    .block();
-
-            if (curso != null) {
-                e.setCursoNombre(curso.getNombre());
-            }
-        } catch (Exception ex) {
-            e.setCursoNombre("Información no disponible (MS apagado)");
+private void rellenarNombreCurso(Evaluaciones e) {
+    try {
+        CursoResponse curso = restTemplate.getForObject(
+            "http://localhost:8081/curso/" + e.getCursoId(),
+            CursoResponse.class
+        );
+        if (curso != null) {
+            e.setCursoNombre(curso.getNombre());
         }
+    } catch (Exception ex) {
+        e.setCursoNombre("Información no disponible (MS apagado)");
     }
+}
 
-    public evaluaciones guardar(evaluaciones e) {
-        evaluaciones guardada = repo.save(e);
+    public Evaluaciones guardar(Evaluaciones e) {
+        Evaluaciones guardada = repo.save(e);
         rellenarNombreCurso(guardada);
         return guardada;
     }
 
-    public evaluaciones actualizar(Long id, evaluaciones nueva) {
-        evaluaciones e = repo.findById(id)
+    public Evaluaciones actualizar(Long id, Evaluaciones nueva) {
+        Evaluaciones e = repo.findById(id)
             .orElseThrow(() -> new RuntimeException("Evaluación no encontrada con id: " + id));
 
         e.setNombre(nueva.getNombre());
         e.setCursoId(nueva.getCursoId());
         e.setEstudianteId(nueva.getEstudianteId());
 
-        evaluaciones guardada = repo.save(e);
+        Evaluaciones guardada = repo.save(e);
         rellenarNombreCurso(guardada);
         return guardada;
     }
 
-    public List<evaluaciones> porCurso(Long cursoId) {
-        List<evaluaciones> lista = repo.findByCursoId(cursoId);
+    public List<Evaluaciones> porCurso(Long cursoId) {
+        List<Evaluaciones> lista = repo.findByCursoId(cursoId);
         lista.forEach(this::rellenarNombreCurso);
         return lista;
     }
 
-    public evaluaciones registrarNota(Long id, int nota) {
+    public Evaluaciones registrarNota(Long id, int nota) {
         if (nota < 1 || nota > 7) {
             throw new RuntimeException("Nota fuera de rango: debe estar entre 1 y 7");
         }
 
-        evaluaciones e = repo.findById(id)
+        Evaluaciones e = repo.findById(id)
             .orElseThrow(() -> new RuntimeException("Evaluación no encontrada con id: " + id));
 
         e.setCalificacion(nota);
-        evaluaciones guardada = repo.save(e);
+        Evaluaciones guardada = repo.save(e);
         rellenarNombreCurso(guardada);
         return guardada;
     }
 
-    public List<evaluaciones> porEstudiante(Long id) {
-        List<evaluaciones> lista = repo.findByEstudianteId(id);
+    public List<Evaluaciones> porEstudiante(Long id) {
+        List<Evaluaciones> lista = repo.findByEstudianteId(id);
         lista.forEach(this::rellenarNombreCurso);
         return lista;
     }

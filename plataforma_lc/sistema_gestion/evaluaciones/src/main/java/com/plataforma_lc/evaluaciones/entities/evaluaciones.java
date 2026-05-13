@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-public class evaluaciones {
+public class Evaluaciones {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class evaluaciones {
     private String nombre;
 
     @NotNull(message = "El curso es obligatorio")
-    private Long cursoId;  // ← cambia de String curso a Long cursoId
+    private Long cursoId;
 
     @NotNull(message = "El estudiante es obligatorio")
     private Long estudianteId;
@@ -32,5 +32,5 @@ public class evaluaciones {
     private int calificacion;
 
     @Transient
-    private String cursoNombre;  // ← nuevo, no se guarda en BD
+    private String cursoNombre;
 }

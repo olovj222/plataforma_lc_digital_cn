@@ -1,9 +1,9 @@
-package com.plataforma_lc.evaluciones;
+package com.plataforma_lc.evaluaciones;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class EvaluacionesApplication {
@@ -11,8 +11,9 @@ public class EvaluacionesApplication {
         SpringApplication.run(EvaluacionesApplication.class, args);
     }
 
-    @Bean
-    public WebClient.Builder webClientBuilder() {
-        return WebClient.builder();
-    }
+@Bean
+public RestTemplate restTemplate() {
+    return new RestTemplate();
+
+}
 }

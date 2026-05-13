@@ -5,15 +5,17 @@
 package com.plataforma_lc.evaluaciones.repository;
 
 
-import com.plataforma_lc.evaluaciones.entities.evaluaciones;
+import com.plataforma_lc.evaluaciones.entities.Evaluaciones;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author juako
  */
-public interface evaluacionesRepository extends JpaRepository<evaluaciones, Long> {
-    List<evaluaciones> findByCursoId(Long cursoId);
-    List<evaluaciones> findByEstudianteId(Long estudianteId);
+@Repository
+public interface evaluacionesRepository extends JpaRepository<Evaluaciones, Long> {
+    List<Evaluaciones> findByCursoId(Long cursoId);
+    List<Evaluaciones> findByEstudianteId(Long estudianteId);
 }
