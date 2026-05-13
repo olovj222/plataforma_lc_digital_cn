@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>estudiante</module>
+        <module>curso</module>
     </modules>
     <dependencies>
         <!-- Dependencias que quieras que hereden los hijos de businessdomain -->
@@ -33,11 +34,11 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-data-jpa</artifactId>
                 </dependency>
-                <dependency>
+<!--                <dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency>
+		</dependency>-->
                 <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc</artifactId>
@@ -61,6 +62,10 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-webflux</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-reactor-netty</artifactId>
                 </dependency>
                 
               <dependency>
