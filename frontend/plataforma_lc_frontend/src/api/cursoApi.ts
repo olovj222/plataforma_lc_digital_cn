@@ -25,3 +25,8 @@ export const updateCurso = async (id: number, curso: Curso): Promise<Curso> => {
 export const deleteCurso = async (id: number): Promise<void> => {
   await cursoApi.delete(`/curso/${id}`)
 }
+
+export const getCursosByProfesor = async (profesorId: number): Promise<Curso[]> => {
+  const { data } = await cursoApi.get('/curso')
+  return data.filter((curso: Curso) => curso.profesorId === profesorId)
+}

@@ -4,6 +4,9 @@ import EstudiantesPage from './pages/EstudiantesPage'
 import Layout from './components/common/Layout'
 import Home from './pages/Home'
 import CursosPage from './pages/CursosPage'
+import ProfesorLoginPage from './pages/ProfesorLoginPage'
+import MisCursosPage from './pages/MisCursosPage'
+import DetalleCursoPage from './pages/DetalleCursoPage'
 
 function App() {
   return (
@@ -16,6 +19,11 @@ function App() {
             <Route path="estudiantes" element={<EstudiantesPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
+        </Route>
+        <Route path="profesor">
+          <Route index element={<ProfesorLoginPage />} />
+          <Route path="mis-cursos" element={<MisCursosPage />} />
+          <Route path="mis-cursos/:id" element={<DetalleCursoPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
