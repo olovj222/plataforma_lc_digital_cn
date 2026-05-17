@@ -7,6 +7,7 @@ package com.plataforma_lc.estudiante.controller;
 import com.plataforma_lc.estudiante.entities.CursoResponse;
 import com.plataforma_lc.estudiante.entities.Estudiante;
 import com.plataforma_lc.estudiante.entities.EstudianteCurso;
+import com.plataforma_lc.estudiante.exception.BusinessRuleException;
 import com.plataforma_lc.estudiante.repository.EstudianteRepository;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
@@ -72,74 +73,70 @@ public class EstudianteRestController {
 }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> get(@PathVariable("id") Long id) {
-    Optional<Estudiante> optionalEstudiante = estudianteRepository.findById(id);
+    public ResponseEntity<Estudiante> get(@PathVariable("id") Long id) throws BusinessRuleException {
+        Estudiante estudiante = estudianteRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException(
+                        "Estudiante con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
+                ));
 
-    if (optionalEstudiante.isPresent()) {
-        Estudiante estudiante = optionalEstudiante.get();
-
-        // Iteramos sobre la relación EstudianteCurso
         for (EstudianteCurso relacion : estudiante.getCursos()) {
             try {
-                // Intentamos buscar el nombre del curso
                 CursoResponse cursoRespuesta = webClientBuilder.build()
                         .get()
                         .uri("http://localhost:8081/curso/{id}", relacion.getCursoId())
                         .retrieve()
                         .bodyToMono(CursoResponse.class)
-                        .block(); 
+                        .block();
 
                 if (cursoRespuesta != null) {
                     relacion.setCursoName(cursoRespuesta.getNombre());
                 }
             } catch (Exception ex) {
-                // Si este curso en particular falla (o el MS está apagado),
-                // manejamos el error SOLAMENTE para este registro, sin botar la app.
-                relacion.setCursoName("Información no disponible (MS apagado)");
+                relacion.setCursoName("MS Cursos no disponible");
             }
         }
-        
-        // Retornamos SIEMPRE al estudiante. Si el MS de cursos estaba encendido, 
-        // tendrá los nombres reales. Si estaba apagado, tendrá el texto de advertencia.
         return new ResponseEntity<>(estudiante, HttpStatus.OK);
-        
-    } else {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-}
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> put(@PathVariable("id") Long id, @RequestBody Estudiante input) {
-        Optional<Estudiante> optionalEstudiante = estudianteRepository.findById(id);
+    public ResponseEntity<Estudiante> put(@PathVariable("id") Long id, @RequestBody Estudiante input) throws BusinessRuleException {
+        Estudiante estudiante = estudianteRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException(
+                        "Estudiante con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
+                ));
 
-        if (optionalEstudiante.isPresent()) {
-            Estudiante newEstudiante = optionalEstudiante.get();
-            // Actualizamos los campos básicos
-            newEstudiante.setNombre(input.getNombre());
-            
-            Estudiante guardado = estudianteRepository.save(newEstudiante);
-            return new ResponseEntity<>(guardado, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        estudiante.setNombre(input.getNombre());
+        estudiante.setApPaterno(input.getApPaterno());
+        estudiante.setApMaterno(input.getApMaterno());
+        estudiante.setDireccion(input.getDireccion());
+        estudiante.setTelefono(input.getTelefono());
+
+        Estudiante guardado = estudianteRepository.save(estudiante);
+        return new ResponseEntity<>(guardado, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<?> post(@Valid @RequestBody Estudiante input) {
-        // Regla: Debe estar asociado al menos a un curso
+    public ResponseEntity<Estudiante> post(@Valid @RequestBody Estudiante input) throws BusinessRuleException {
         if (input.getCursos() == null || input.getCursos().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Error: El estudiante debe estar asociado al menos a un curso para registrarse.");
+            throw new BusinessRuleException(
+                    "El estudiante debe estar asociado al menos a un curso", HttpStatus.BAD_REQUEST.value()
+            );
         }
 
         input.getCursos().forEach(curso -> curso.setEstudiante(input));
-        Estudiante retorno = estudianteRepository.save(input);
-        return ResponseEntity.status(HttpStatus.CREATED).body(retorno);
+        Estudiante guardado = estudianteRepository.save(input);
+        return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) throws BusinessRuleException {
+        estudianteRepository.findById(id)
+                .orElseThrow(() -> new BusinessRuleException(
+                        "Estudiante con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
+                ));
+
         estudianteRepository.deleteById(id);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }
