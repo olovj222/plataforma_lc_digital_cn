@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import type { Curso } from '../../types/Curso'
 
@@ -10,7 +10,14 @@ interface Props {
 function CursoForm({ onSubmit, inicial }: Props) {
   const [form, setForm] = useState<Curso>(
     inicial ?? { nombre: '', codigo: 0, profesorId: 0 }
-  )
+  ) 
+  useEffect(() => {
+  if (inicial) {
+    setForm(inicial)
+  } else {
+    setForm({ nombre: '', codigo: 0, profesorId: 0 })
+  }
+}, [inicial])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target

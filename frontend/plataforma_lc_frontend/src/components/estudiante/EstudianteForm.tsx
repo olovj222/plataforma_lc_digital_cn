@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, TextField, Typography, IconButton } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -20,6 +20,23 @@ function EstudianteForm({ onSubmit, inicial }: Props) {
       cursos: [{ cursoId: 0 }]
     }
   )
+
+  useEffect(() => {
+    if (inicial) {
+      setForm(inicial)
+    } else {
+      setForm({
+      nombre: '',
+      apPaterno: '',
+      apMaterno: '',
+      direccion: '',
+      telefono: '',
+      cursos: [{ cursoId: 0 }]
+     })
+    }
+  }, [inicial])
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
