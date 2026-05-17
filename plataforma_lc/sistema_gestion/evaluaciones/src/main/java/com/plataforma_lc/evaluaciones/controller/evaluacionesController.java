@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import java.util.List;
 /**
  *
@@ -24,35 +25,33 @@ public class evaluacionesController {
     private evaluacionesService service;
 
     @PostMapping
-    public ResponseEntity<?> crear(@RequestBody Evaluaciones e) {
+    public ResponseEntity<?> crear(@Valid @RequestBody Evaluaciones e) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(e));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Evaluaciones e) {
-        try {
-            return ResponseEntity.ok(service.actualizar(id, e));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-        }
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody Evaluaciones e) {
+        return ResponseEntity.ok(service.actualizar(id, e));
     }
 
     @GetMapping("/curso/{cursoId}")
-    public List<Evaluaciones> porCurso(@PathVariable Long cursoId) {
-        return service.porCurso(cursoId);
+    public ResponseEntity<List<Evaluaciones>> porCurso(@PathVariable Long cursoId) {
+        return ResponseEntity.ok(service.porCurso(cursoId));
     }
 
     @PostMapping("/{id}/nota")
     public ResponseEntity<?> ponerNota(@PathVariable Long id, @RequestParam int nota) {
-        try {
-            return ResponseEntity.ok(service.registrarNota(id, nota));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
+        return ResponseEntity.ok(service.registrarNota(id, nota));
     }
 
     @GetMapping("/estudiante/{id}")
-    public List<Evaluaciones> porEstudiante(@PathVariable Long id) {
-        return service.porEstudiante(id);
+    public ResponseEntity<List<Evaluaciones>> porEstudiante(@PathVariable Long id) {
+        return ResponseEntity.ok(service.porEstudiante(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        service.eliminar(id);
+        return ResponseEntity.ok("Evaluación eliminada correctamente");
     }
 }
