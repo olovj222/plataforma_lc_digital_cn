@@ -23,6 +23,9 @@ function Navbar() {
               <Button color="inherit" onClick={() => navigate('/admin/estudiantes')}>
                 Estudiantes
               </Button>
+              <Button color="inherit" onClick={() => navigate('/admin/asistencia')}>
+                Asistencia
+                </Button>
             </>
           )}
           {isProfesor && (

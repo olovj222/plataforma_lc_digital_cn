@@ -5,9 +5,9 @@ import {
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-import { getCursosByProfesor } from '../api/cursoApi'
-import type { Curso } from '../types/Curso'
-import keycloak from '../keycloak'
+import { getCursosByProfesor } from '../../api/cursoApi'
+import type { Curso } from '../../types/Curso'
+import keycloak from '../../keycloak'
 
 function MisCursosPage() {
   const [cursos, setCursos] = useState<Curso[]>([])

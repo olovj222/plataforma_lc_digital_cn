@@ -6,9 +6,9 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import { getEstudiantes, createEstudiante, updateEstudiante, deleteEstudiante } from '../api/estudianteApi'
-import EstudianteForm from '../components/estudiante/EstudianteForm'
-import type { Estudiante } from '../types/Estudiante'
+import { getEstudiantes, createEstudiante, updateEstudiante, deleteEstudiante } from '../../api/estudianteApi'
+import EstudianteForm from '../../components/estudiante/EstudianteForm'
+import type { Estudiante } from '../../types/Estudiante'
 
 function EstudiantesPage() {
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([])

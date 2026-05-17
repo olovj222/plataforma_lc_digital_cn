@@ -11,9 +11,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   getEvaluacionesPorCurso, crearEvaluacion, actualizarNota,
   eliminarEvaluacion, type Evaluacion
-} from '../api/evaluacionesApi'
-import { getEstudiantes } from '../api/estudianteApi'
-import type { Estudiante } from '../types/Estudiante'
+} from '../../api/evaluacionesApi'
+import { getEstudiantes } from '../../api/estudianteApi'
+import type { Estudiante } from '../../types/Estudiante'
 
 function EvaluacionesPage() {
   const { id } = useParams()
