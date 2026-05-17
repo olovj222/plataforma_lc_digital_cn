@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { getCursosByProfesor } from '../api/cursoApi'
 import type { Curso } from '../types/Curso'
+import keycloak from '../keycloak'
 
 function MisCursosPage() {
   const [cursos, setCursos] = useState<Curso[]>([])
@@ -14,7 +15,7 @@ function MisCursosPage() {
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
 
-  const profesorId = Number(localStorage.getItem('profesorId'))
+  const profesorId = keycloak.tokenParsed?.sub ?? ''
 
   useEffect(() => {
     const cargar = async () => {

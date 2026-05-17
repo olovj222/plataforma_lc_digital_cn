@@ -9,13 +9,13 @@ interface Props {
 
 function CursoForm({ onSubmit, inicial }: Props) {
   const [form, setForm] = useState<Curso>(
-    inicial ?? { nombre: '', codigo: 0, profesorId: 0 }
+    inicial ?? { nombre: '', codigo: 0, profesorId: '' }
   ) 
   useEffect(() => {
   if (inicial) {
     setForm(inicial)
   } else {
-    setForm({ nombre: '', codigo: 0, profesorId: 0 })
+    setForm({ nombre: '', codigo: 0, profesorId: '' })
   }
 }, [inicial])
 

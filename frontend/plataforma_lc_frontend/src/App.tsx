@@ -9,6 +9,7 @@ import MisCursosPage from './pages/MisCursosPage'
 import DetalleCursoPage from './pages/DetalleCursoPage'
 import AsistenciasPage from './pages/AsistenciasPage'
 import keycloak from './keycloak'
+import EvaluacionesPage from './pages/EvaluacionesPage'
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
             <Route index element={<ProfesorLoginPage />} />
             <Route path="mis-cursos" element={isProfesor ? <MisCursosPage /> : <Navigate to="/" />} />
             <Route path="mis-cursos/:id" element={isProfesor ? <DetalleCursoPage /> : <Navigate to="/" />} />
+            <Route path="mis-cursos/:id/evaluaciones" element={isProfesor ? <EvaluacionesPage /> : <Navigate to="/" />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Route>

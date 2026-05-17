@@ -13,6 +13,10 @@ export const asistenciaApi = axios.create({
   baseURL: 'http://localhost:8085',
 })
 
+export const evaluacionesApi = axios.create({
+  baseURL: 'http://localhost:8085',
+})
+
 // Interceptor que agrega el token JWT en cada request
 const authInterceptor = (config: any) => {
   if (keycloak.token) {
@@ -24,3 +28,4 @@ const authInterceptor = (config: any) => {
 cursoApi.interceptors.request.use(authInterceptor)
 estudianteApi.interceptors.request.use(authInterceptor)
 asistenciaApi.interceptors.request.use(authInterceptor)
+evaluacionesApi.interceptors.request.use(authInterceptor)

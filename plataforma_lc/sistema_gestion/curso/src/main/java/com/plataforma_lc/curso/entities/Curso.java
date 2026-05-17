@@ -28,7 +28,7 @@ public class Curso {
     private Integer codigo;
 
     @Schema(example = "1")
-    private Long profesorId;
+    private String profesorId;
 
     @Schema(hidden = true)
     @Transient
