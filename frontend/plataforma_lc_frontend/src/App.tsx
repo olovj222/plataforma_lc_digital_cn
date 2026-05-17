@@ -7,6 +7,7 @@ import CursosPage from './pages/CursosPage'
 import ProfesorLoginPage from './pages/ProfesorLoginPage'
 import MisCursosPage from './pages/MisCursosPage'
 import DetalleCursoPage from './pages/DetalleCursoPage'
+import AsistenciasPage from './pages/AsistenciasPage'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="admin">
             <Route path="cursos" element={<CursosPage />} />
             <Route path="estudiantes" element={<EstudiantesPage />} />
+            <Route path="asistencias" element={<AsistenciasPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
