@@ -7,6 +7,7 @@ package com.plataforma_lc.asistencia.controller;
 import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
 import com.plataforma_lc.asistencia.entities.Asistencia;
 import com.plataforma_lc.asistencia.entities.EstudianteResponse;
+import com.plataforma_lc.asistencia.service.EstudianteClientService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,7 @@ public class AsistenciaRestController {
     private AsistenciaRepository asistenciaRepository;
     
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    private EstudianteClientService estudianteClientService;
     
     @GetMapping()
     public List<Asistencia> list(){
@@ -68,14 +69,8 @@ public class AsistenciaRestController {
             return ResponseEntity.badRequest().body("Error: El estudiante ya tiene asistencia registrada en este curso para la fecha indicada.");
         }
 
-        try {
-            EstudianteResponse estudianteRespuesta = webClientBuilder.build()
-                    .get()
-                    .uri("http://localhost:8080/estudiante/{id}", input.getId_estudiante())
-                    .retrieve()
-                    .bodyToMono(EstudianteResponse.class)
-                    .block();
-        } catch (Exception e) {
+        EstudianteResponse estudianteRespuesta = estudianteClientService.obtenerEstudiante(input.getId_estudiante());
+        if (estudianteRespuesta == null || estudianteRespuesta.getNombre().equals("MS Estudiante no disponible")) {
             return ResponseEntity.badRequest().body("Error: El microservicio esta apagado o no se encontro el registro.");
         }
         

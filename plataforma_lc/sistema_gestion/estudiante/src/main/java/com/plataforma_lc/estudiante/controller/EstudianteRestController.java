@@ -4,11 +4,13 @@
  */
 package com.plataforma_lc.estudiante.controller;
 
+
 import com.plataforma_lc.estudiante.entities.CursoResponse;
 import com.plataforma_lc.estudiante.entities.Estudiante;
 import com.plataforma_lc.estudiante.entities.EstudianteCurso;
 import com.plataforma_lc.estudiante.exception.BusinessRuleException;
 import com.plataforma_lc.estudiante.repository.EstudianteRepository;
+import com.plataforma_lc.estudiante.service.CursoClientService;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,39 +40,23 @@ public class EstudianteRestController {
     EstudianteRepository estudianteRepository;
     
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    CursoClientService cursoClientService;
     
     @GetMapping
     public ResponseEntity<List<Estudiante>> listarTodos() {
-    // 1. Traemos todos los estudiantes de la base de datos
-    List<Estudiante> estudiantes = (List<Estudiante>) estudianteRepository.findAll();
+        List<Estudiante> estudiantes = estudianteRepository.findAll();
 
-    // 2. Recorremos cada estudiante
-    for (Estudiante estudiante : estudiantes) {
-        // 3. Recorremos los cursos de ese estudiante
-        for (EstudianteCurso relacion : estudiante.getCursos()) {
-            try {
-                // Hacemos la llamada al microservicio
-                CursoResponse cursoRespuesta = webClientBuilder.build()
-                        .get()
-                        .uri("http://localhost:8081/curso/{id}", relacion.getCursoId())
-                        .retrieve()
-                        .bodyToMono(CursoResponse.class)
-                        .block();
-
+        for (Estudiante estudiante : estudiantes) {
+            for (EstudianteCurso relacion : estudiante.getCursos()) {
+                CursoResponse cursoRespuesta = cursoClientService.obtenerCurso(relacion.getCursoId());
                 if (cursoRespuesta != null) {
                     relacion.setCursoName(cursoRespuesta.getNombre());
                 }
-            } catch (Exception ex) {
-                // Manejo de error si el MS está apagado
-                relacion.setCursoName("Información no disponible (MS apagado)");
             }
         }
+        return new ResponseEntity<>(estudiantes, HttpStatus.OK);
     }
 
-    // 4. Devolvemos la lista ya rellenada
-    return new ResponseEntity<>(estudiantes, HttpStatus.OK);
-}
 
     @GetMapping("/{id}")
     public ResponseEntity<Estudiante> get(@PathVariable("id") Long id) throws BusinessRuleException {
@@ -80,19 +66,9 @@ public class EstudianteRestController {
                 ));
 
         for (EstudianteCurso relacion : estudiante.getCursos()) {
-            try {
-                CursoResponse cursoRespuesta = webClientBuilder.build()
-                        .get()
-                        .uri("http://localhost:8081/curso/{id}", relacion.getCursoId())
-                        .retrieve()
-                        .bodyToMono(CursoResponse.class)
-                        .block();
-
-                if (cursoRespuesta != null) {
-                    relacion.setCursoName(cursoRespuesta.getNombre());
-                }
-            } catch (Exception ex) {
-                relacion.setCursoName("MS Cursos no disponible");
+            CursoResponse cursoRespuesta = cursoClientService.obtenerCurso(relacion.getCursoId());
+            if (cursoRespuesta != null) {
+                relacion.setCursoName(cursoRespuesta.getNombre());
             }
         }
         return new ResponseEntity<>(estudiante, HttpStatus.OK);
