@@ -28,7 +28,7 @@ public class SecurityConfig {
                 return config;
             }))
             .authorizeExchange(auth -> auth
-                .anyExchange().authenticated()
+                .anyExchange().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> {})
