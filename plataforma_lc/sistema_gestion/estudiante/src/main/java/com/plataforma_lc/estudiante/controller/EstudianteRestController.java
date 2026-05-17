@@ -111,6 +111,13 @@ public class EstudianteRestController {
         estudiante.setApMaterno(input.getApMaterno());
         estudiante.setDireccion(input.getDireccion());
         estudiante.setTelefono(input.getTelefono());
+        
+        // Actualizar cursos
+        estudiante.getCursos().clear();
+        input.getCursos().forEach(curso -> {
+            curso.setEstudiante(estudiante);
+            estudiante.getCursos().add(curso);
+        });
 
         Estudiante guardado = estudianteRepository.save(estudiante);
         return new ResponseEntity<>(guardado, HttpStatus.OK);
