@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>estudiante</module>
+        <module>asistencia</module>
         <module>curso</module>
     </modules>
     <dependencies>
