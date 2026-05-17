@@ -5,6 +5,7 @@
 package com.plataforma_lc.estudiante.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,16 +24,21 @@ import lombok.Data;
 @Entity
 @Data
 public class EstudianteCurso {
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Schema(example = "1", description = "ID del curso en el MS Cursos")
     @Column(name = "curso_id")
-    private Long cursoId; // Referencia al ID en el MS Cursos
+    private Long cursoId;
 
+    @Schema(hidden = true)
     @Transient
-    private String cursoName; // Se llena con WebClient, NO se guarda en BD de estudiantes
+    private String cursoName;
 
+    @Schema(hidden = true)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "estudiante_id")
     @JsonBackReference
