@@ -26,7 +26,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @RequestMapping("/asistencia")
-@CrossOrigin(origins = "http://localhost:5173")
 public class AsistenciaRestController {
     @Autowired
     private AsistenciaRepository asistenciaRepository;
