@@ -1,0 +1,7 @@
+nbactions.xml
+target/
+*.class
+*.jar
+*.war
+.nb-gradle/
+nbproject/private/

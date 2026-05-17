@@ -8,4 +8,9 @@
     </parent>
     <artifactId>sistema_infra</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>adminSpringBoot</module>
+        <module>eurekaServer</module>
+        <module>apiGateway</module>
+    </modules>
 </project>
