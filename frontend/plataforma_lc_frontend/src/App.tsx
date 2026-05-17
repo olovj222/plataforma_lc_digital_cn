@@ -8,24 +8,33 @@ import ProfesorLoginPage from './pages/ProfesorLoginPage'
 import MisCursosPage from './pages/MisCursosPage'
 import DetalleCursoPage from './pages/DetalleCursoPage'
 import AsistenciasPage from './pages/AsistenciasPage'
+import keycloak from './keycloak'
+
 
 function App() {
+  const roles = keycloak.tokenParsed?.realm_access?.roles ?? []
+  const isAdmin = roles.includes('ADMIN')
+  const isProfesor = roles.includes('PROFESOR')
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout/>}>
-          <Route index element={<Home />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={
+            isAdmin ? <Navigate to="/admin/cursos" /> :
+            isProfesor ? <Navigate to="/profesor/mis-cursos" /> :
+            <Home />
+          } />
           <Route path="admin">
-            <Route path="cursos" element={<CursosPage />} />
-            <Route path="estudiantes" element={<EstudiantesPage />} />
-            <Route path="asistencias" element={<AsistenciasPage />} />
+            <Route path="cursos" element={isAdmin ? <CursosPage /> : <Navigate to="/" />} />
+            <Route path="estudiantes" element={isAdmin ? <EstudiantesPage /> : <Navigate to="/" />} />
+          </Route>
+          <Route path="profesor">
+            <Route index element={<ProfesorLoginPage />} />
+            <Route path="mis-cursos" element={isProfesor ? <MisCursosPage /> : <Navigate to="/" />} />
+            <Route path="mis-cursos/:id" element={isProfesor ? <DetalleCursoPage /> : <Navigate to="/" />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-        <Route path="profesor">
-          <Route index element={<ProfesorLoginPage />} />
-          <Route path="mis-cursos" element={<MisCursosPage />} />
-          <Route path="mis-cursos/:id" element={<DetalleCursoPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
