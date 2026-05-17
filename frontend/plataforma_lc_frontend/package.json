@@ -15,6 +15,7 @@
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.1",
     "axios": "^1.16.1",
+    "keycloak": "^1.2.0",
     "keycloak-js": "^26.2.4",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
