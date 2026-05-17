@@ -5,10 +5,10 @@ import {
 } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 
-import { getCursoById } from '../api/cursoApi'
-import { getEstudiantes } from '../api/estudianteApi'
-import type { Curso } from '../types/Curso'
-import type { Estudiante } from '../types/Estudiante'
+import { getCursoById } from '../../api/cursoApi'
+import { getEstudiantes } from '../../api/estudianteApi'
+import type { Curso } from '../../types/Curso'
+import type { Estudiante } from '../../types/Estudiante'
 
 function DetalleCursoPage() {
   const { id } = useParams()

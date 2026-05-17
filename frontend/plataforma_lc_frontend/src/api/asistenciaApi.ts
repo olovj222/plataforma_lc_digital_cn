@@ -25,3 +25,7 @@ export const updateAsistencia = async (id: number, asistencia: Asistencia): Prom
 export const deleteAsistencia = async (id: number): Promise<void> => {
     await asistenciaApi.delete(`/asistencia/${id}`)
 }
+export const getAsistenciasPorCurso = async (cursoId: number): Promise<Asistencia[]> => {
+  const { data } = await asistenciaApi.get(`/asistencia/curso/${cursoId}`)
+  return data
+}

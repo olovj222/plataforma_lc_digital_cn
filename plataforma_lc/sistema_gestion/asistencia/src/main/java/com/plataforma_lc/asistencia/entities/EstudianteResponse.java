@@ -4,7 +4,9 @@
  */
 package com.plataforma_lc.asistencia.entities;
 
+import lombok.Data;
 
+@Data
 public class EstudianteResponse {
     private long id;
     private String nombre;

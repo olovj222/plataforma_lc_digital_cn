@@ -7,9 +7,9 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 
-import { getCursos, createCurso, updateCurso, deleteCurso } from '../api/cursoApi'
-import CursoForm from '../components/curso/CursoForm'
-import type { Curso } from '../types/Curso'
+import { getCursos, createCurso, updateCurso, deleteCurso } from '../../api/cursoApi'
+import CursoForm from '../../components/curso/CursoForm'
+import type { Curso } from '../../types/Curso'
 
 function CursosPage() {
   const [cursos, setCursos] = useState<Curso[]>([])

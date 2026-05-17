@@ -6,9 +6,9 @@ import {
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
-import { getAsistencia, createAsistencia, updateAsistencia, deleteAsistencia } from '../api/asistenciaApi'
-import AsistenciaForm from '../components/asistencia/AsistenciaForm' 
-import type { Asistencia } from '../types/Asistencia'
+import { getAsistencia, createAsistencia, updateAsistencia, deleteAsistencia } from '../../api/asistenciaApi'
+import AsistenciaForm from '../../components/asistencia/AsistenciaForm' 
+import type { Asistencia } from '../../types/Asistencia'
 
 function AsistenciasPage() {
   const [asistencias, setAsistencias] = useState<Asistencia[]>([])
@@ -43,18 +43,19 @@ function AsistenciasPage() {
   }
 
   const handleSubmit = async (asistencia: Asistencia) => {
-    try {
-      if (asistenciaEditando?.id) {
-        await updateAsistencia(asistenciaEditando.id, asistencia)
-      } else {
-        await createAsistencia(asistencia)
-      }
-      handleCerrar()
-      cargarAsistencias()
-    } catch (error) {
-      console.error('Error guardando asistencia:', error)
+  try {
+    if (asistenciaEditando?.id) {
+      await updateAsistencia(asistenciaEditando.id, asistencia)
+    } else {
+      await createAsistencia(asistencia)
     }
+    handleCerrar()
+    cargarAsistencias()
+  } catch (err: any) {
+    const mensaje = err.response?.data || 'Error al registrar asistencia.'
+    alert(mensaje)
   }
+}
 
   const handleEliminar = async (id: number) => {
     if (!confirm('¿Eliminar este registro de asistencia?')) return
@@ -109,7 +110,7 @@ function AsistenciasPage() {
       {/* 4. Fecha */}
       <TableCell>
         {asistencia.fecha 
-          ? (typeof asistencia.fecha === 'string' ? asistencia.fecha.split('T')[0] : String(asistencia.fecha)) 
+          ? String(asistencia.fecha).split('T')[0]
           : '—'}
       </TableCell>
       
