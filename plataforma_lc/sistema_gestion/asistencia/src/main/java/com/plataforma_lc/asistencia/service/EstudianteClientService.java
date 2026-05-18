@@ -25,7 +25,7 @@ public class EstudianteClientService {
     public EstudianteResponse obtenerEstudiante(Long estudianteId) {
         return webClientBuilder.build()
                 .get()
-                .uri("http://" + estudianteHost + "/estudiante/{id}", estudianteId)
+                .uri(estudianteHost + "/estudiante/{id}", estudianteId)
                 .retrieve()
                 .bodyToMono(EstudianteResponse.class)
                 .block();

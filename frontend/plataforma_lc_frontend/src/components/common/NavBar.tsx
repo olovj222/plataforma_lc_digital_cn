@@ -33,7 +33,7 @@ function Navbar() {
               Mis Cursos
             </Button>
           )}
-          <Button color="inherit" onClick={() => keycloak.logout()}>
+          <Button color="inherit" onClick={() => keycloak.logout({ redirectUri: 'http://localhost:5173/' })}>
             Cerrar Sesión
           </Button>
         </Box>

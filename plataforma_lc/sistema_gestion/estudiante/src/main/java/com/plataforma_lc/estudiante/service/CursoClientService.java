@@ -27,7 +27,7 @@ public class CursoClientService {
     public CursoResponse obtenerCurso(Long cursoId) {
         return webClientBuilder.build()
                 .get()
-                .uri("http://" + cursoHost + "/curso/{id}", cursoId)
+                .uri(cursoHost + "/curso/{id}", cursoId)
                 .retrieve()
                 .bodyToMono(CursoResponse.class)
                 .block();
