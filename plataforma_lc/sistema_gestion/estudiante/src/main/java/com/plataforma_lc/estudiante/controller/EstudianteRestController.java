@@ -103,12 +103,28 @@ public class EstudianteRestController {
     public ResponseEntity<Estudiante> post(@Valid @RequestBody Estudiante input) throws BusinessRuleException {
         if (input.getCursos() == null || input.getCursos().isEmpty()) {
             throw new BusinessRuleException(
-                    "El estudiante debe estar asociado al menos a un curso", HttpStatus.BAD_REQUEST.value()
+                "El estudiante debe estar asociado al menos a un curso", 
+                HttpStatus.BAD_REQUEST.value()
             );
         }
 
-        input.getCursos().forEach(curso -> curso.setEstudiante(input));
-        Estudiante guardado = estudianteRepository.save(input);
+        Estudiante nuevo = Estudiante.builder()
+            .nombre(input.getNombre())
+            .apPaterno(input.getApPaterno())
+            .apMaterno(input.getApMaterno())
+            .direccion(input.getDireccion())
+            .telefono(input.getTelefono())
+            .cursos(new ArrayList<>())
+            .asistencias(new ArrayList<>())
+            .evaluaciones(new ArrayList<>())
+            .build();
+
+        input.getCursos().forEach(curso -> {
+            curso.setEstudiante(nuevo);
+            nuevo.getCursos().add(curso);
+        });
+
+        Estudiante guardado = estudianteRepository.save(nuevo);
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 

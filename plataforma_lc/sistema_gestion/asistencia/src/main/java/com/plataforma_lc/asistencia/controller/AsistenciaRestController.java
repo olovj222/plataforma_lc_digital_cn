@@ -6,7 +6,9 @@ package com.plataforma_lc.asistencia.controller;
 
 import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
 import com.plataforma_lc.asistencia.entities.Asistencia;
+import com.plataforma_lc.asistencia.entities.Clase;
 import com.plataforma_lc.asistencia.entities.EstudianteResponse;
+import com.plataforma_lc.asistencia.repository.ClaseRepository;
 import com.plataforma_lc.asistencia.service.EstudianteClientService;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +16,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @RequestMapping("/asistencia")
@@ -39,44 +39,59 @@ public class AsistenciaRestController {
         return asistenciaRepository.findAll();
     }
     
+    @Autowired
+    private ClaseRepository claseRepository; 
+    
     @PostMapping
     public ResponseEntity<?> post(@RequestBody Asistencia input) {
-        
-        if (input.getId_curso() == 0) {
-            return ResponseEntity.badRequest().body("Error: La asistencia debe tener una clase asignada (id_curso).");
+
+        // 1. Validar que la clase existe ← NUEVO
+        Optional<Clase> claseOpt = claseRepository.findById(input.getId_clase());
+        if (claseOpt.isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body("Error: La clase especificada no existe.");
         }
 
+        // 2. Validar fecha (ya la tienes)
         if (input.getFecha() == null) {
-            return ResponseEntity.badRequest().body("Error: La asistencia debe tener una fecha especificada.");
+            return ResponseEntity.badRequest()
+                .body("Error: La asistencia debe tener una fecha especificada.");
         }
 
-        List<String> estadosValidos = new ArrayList<String>();
-        estadosValidos.add("PRESENT");
-        estadosValidos.add("ABSENT");
-        estadosValidos.add("JUSTIFIED");
+        // 3. Validar estado (ya lo tienes)
+        List<String> estadosValidos = List.of("PRESENT", "ABSENT", "JUSTIFIED");
         if (input.getEstado() == null || !estadosValidos.contains(input.getEstado().toUpperCase())) {
-            return ResponseEntity.badRequest().body("Error: El estado debe ser PRESENT, ABSENT o JUSTIFIED.");
+            return ResponseEntity.badRequest()
+                .body("Error: El estado debe ser PRESENT, ABSENT o JUSTIFIED.");
         }
         input.setEstado(input.getEstado().toUpperCase());
-        
+
+        // 4. Validar duplicado (ya lo tienes)
         boolean yaExiste = asistenciaRepository.existeRegistroDuplicado(
-            input.getId_curso(), 
-            input.getId_estudiante(), 
+            input.getId_clase(),
+            input.getId_estudiante(),
             input.getFecha()
         );
-
         if (yaExiste) {
-            return ResponseEntity.badRequest().body("Error: El estudiante ya tiene asistencia registrada en este curso para la fecha indicada.");
+            return ResponseEntity.badRequest()
+                .body("Error: El estudiante ya tiene asistencia registrada en esta clase.");
         }
 
-        EstudianteResponse estudianteRespuesta = estudianteClientService.obtenerEstudiante(input.getId_estudiante());
-        if (estudianteRespuesta == null || estudianteRespuesta.getNombre().equals("MS Estudiante no disponible")) {
-            return ResponseEntity.badRequest().body("Error: El microservicio esta apagado o no se encontro el registro.");
-        }
-        
-        Asistencia retorno = asistenciaRepository.save(input);
-        return ResponseEntity.ok(retorno);
+        // 5. Validar estudiante via Circuit Breaker (ya lo tienes)
+        EstudianteResponse estudiante = estudianteClientService
+                                    .obtenerEstudiante(input.getId_estudiante());
 
+        if ("Estudiante no encontrado".equals(estudiante.getNombre())) {
+            return ResponseEntity.badRequest()
+                .body("Error: El estudiante con id " + input.getId_estudiante() + " no existe.");
+        }
+
+        if ("MS Estudiante no disponible".equals(estudiante.getNombre())) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body("Error: El microservicio de estudiantes no está disponible.");
+        }
+
+        return ResponseEntity.ok(asistenciaRepository.save(input));
     }
     
     @PutMapping("/{id}")
@@ -84,7 +99,7 @@ public class AsistenciaRestController {
         Optional<Asistencia> optionalAsistencia = asistenciaRepository.findById(id);
         if (optionalAsistencia.isPresent()) {
             Asistencia newAsistencia = optionalAsistencia.get();
-            newAsistencia.setId_curso(input.getId_curso());
+            newAsistencia.setId_clase(input.getId_clase());
             newAsistencia.setId_estudiante(input.getId_estudiante());
             newAsistencia.setEstado(input.getEstado());
             newAsistencia.setFecha(input.getFecha());

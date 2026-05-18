@@ -2,7 +2,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 package com.plataforma_lc.asistencia.entities;
 
 import jakarta.persistence.Entity;
@@ -18,18 +17,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity
 @Builder
-@NoArgsConstructor  
+@NoArgsConstructor
 @AllArgsConstructor
-public class Asistencia {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+@Entity
+public class Clase {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private long id_clase;
-    private long id_estudiante;
-    private String estado;
+
+    private Long cursoId;
+
     @Temporal(TemporalType.DATE)
     private Date fecha;
 
+    private String descripcion;
 }
