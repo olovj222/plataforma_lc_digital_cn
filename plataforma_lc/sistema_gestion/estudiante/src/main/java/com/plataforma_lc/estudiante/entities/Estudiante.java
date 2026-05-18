@@ -14,8 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
@@ -24,6 +28,9 @@ import lombok.ToString;
  */
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Estudiante {
 
@@ -48,21 +55,21 @@ public class Estudiante {
     @Schema(example = "912345678")
     private String telefono;
 
-    @Schema(description = "Lista de cursos asignados al estudiante")
+    @Builder.Default
     @OneToMany(mappedBy = "estudiante", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     @ToString.Exclude
-    private List<EstudianteCurso> cursos;
+    private List<EstudianteCurso> cursos = new ArrayList<>();
 
-    @Schema(hidden = true)
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "estudiante_asistencia", joinColumns = @JoinColumn(name = "estudiante_id"))
     @Column(name = "registro_asistencia")
-    private List<String> asistencias;
+    private List<String> asistencias = new ArrayList<>();
 
-    @Schema(hidden = true)
+    @Builder.Default
     @ElementCollection
     @CollectionTable(name = "estudiante_evaluacion", joinColumns = @JoinColumn(name = "estudiante_id"))
     @Column(name = "nota_evaluacion")
-    private List<String> evaluaciones;
+    private List<String> evaluaciones = new ArrayList<>();
 }

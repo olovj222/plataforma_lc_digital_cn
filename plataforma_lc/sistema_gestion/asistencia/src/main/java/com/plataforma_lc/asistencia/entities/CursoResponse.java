@@ -4,16 +4,11 @@
  */
 package com.plataforma_lc.asistencia.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor  
-@AllArgsConstructor
-public class EstudianteResponse {
-    private long id;
+public class CursoResponse {
+    private Long id;
     private String nombre;
+    private Integer codigo;
 }
