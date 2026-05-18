@@ -1,0 +1,226 @@
+services:
+
+  # Bases de datos
+  mysql-estudiante:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: estudiante
+    ports:
+      - "3307:3306"
+    networks:
+      - plataforma-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  mysql-curso:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: curso
+    ports:
+      - "3308:3306"
+    networks:
+      - plataforma-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  mysql-asistencia:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: asistencia
+    ports:
+      - "3309:3306"
+    networks:
+      - plataforma-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  mysql-evaluaciones:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: evaluaciones
+    ports:
+      - "3310:3306"
+    networks:
+      - plataforma-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Keycloak
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.4
+    environment:
+      environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: http://localhost:8090
+      KC_HOSTNAME_STRICT: false
+      KC_HTTP_ENABLED: true
+    ports:
+      - "8090:8080"
+    command: start-dev --import-realm --spi-import-strategy=OVERWRITE_EXISTING
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    networks:
+      - plataforma-network
+    
+
+  # Eureka
+  eureka-server:
+    build:
+      context: ./plataforma_lc/sistema_infra/eurekaServer
+    ports:
+      - "8761:8761"
+    networks:
+      - plataforma-network
+
+  # MS Estudiante
+  estudiante:
+    build:
+      context: ./plataforma_lc/sistema_gestion/estudiante
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql-estudiante
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_HOST: eureka-server
+      CURSO_HOST: curso
+    depends_on:
+      mysql-estudiante:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-network
+
+  # MS Curso
+  curso:
+    build:
+      context: ./plataforma_lc/sistema_gestion/curso
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: mysql-curso
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_HOST: eureka-server
+    depends_on:
+      mysql-curso:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-network
+
+  # MS Asistencia
+  asistencia:
+    build:
+      context: ./plataforma_lc/sistema_gestion/asistencia
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: mysql-asistencia
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_HOST: eureka-server
+      ESTUDIANTE_HOST: estudiante
+    depends_on:
+      mysql-asistencia:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-network
+
+  # MS Evaluaciones
+  evaluaciones:
+    build:
+      context: ./plataforma_lc/sistema_gestion/evaluaciones
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: mysql-evaluaciones
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_HOST: eureka-server
+    depends_on:
+      mysql-evaluaciones:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-network
+
+  # Admin Server
+  admin-server:
+    build:
+      context: ./plataforma_lc/sistema_infra/adminSpringBoot
+    ports:
+      - "8062:8062"
+    environment:
+      EUREKA_HOST: eureka-server
+    depends_on:
+      eureka-server:
+        condition: service_started
+      estudiante:
+        condition: service_started
+      curso:
+        condition: service_started
+      asistencia:
+        condition: service_started
+      evaluaciones:
+        condition: service_started
+    networks:
+      - plataforma-network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./plataforma_lc/sistema_infra/apiGateway
+    ports:
+      - "8085:8085"
+    environment:
+      EUREKA_HOST: eureka-server
+      KEYCLOAK_HOST: keycloak
+    depends_on:
+      admin-server:
+        condition: service_started
+      eureka-server:
+        condition: service_started
+      keycloak:
+        condition: service_started
+    networks:
+      - plataforma-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend/plataforma_lc_frontend
+    ports:
+      - "5173:80"
+    networks:
+      - plataforma-network
+
+networks:
+  plataforma-network:
+    driver: bridge

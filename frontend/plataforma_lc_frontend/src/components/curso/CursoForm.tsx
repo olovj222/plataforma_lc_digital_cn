@@ -23,7 +23,7 @@ function CursoForm({ onSubmit, inicial }: Props) {
     const { name, value } = e.target
     setForm(prev => ({
       ...prev,
-      [name]: name === 'codigo' || name === 'profesorId' ? Number(value) : value
+      [name]: name === 'codigo' ? Number(value) : value
     }))
   }
 
@@ -55,7 +55,7 @@ function CursoForm({ onSubmit, inicial }: Props) {
       <TextField
         label="ID Profesor"
         name="profesorId"
-        type="number"
+        type="text"
         value={form.profesorId}
         onChange={handleChange}
       />

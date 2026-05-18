@@ -6,10 +6,9 @@ import {
   TextField
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
-  getEvaluacionesPorCurso, crearEvaluacion, actualizarNota,
+  getEvaluacionesPorCurso, crearEvaluacion,
   eliminarEvaluacion, type Evaluacion
 } from '../../api/evaluacionesApi'
 import { getEstudiantes } from '../../api/estudianteApi'

@@ -18,7 +18,12 @@ export const evaluacionesApi = axios.create({
 })
 
 // Interceptor que agrega el token JWT en cada request
-const authInterceptor = (config: any) => {
+const authInterceptor = async (config: any) => {
+  try {
+    await keycloak.updateToken(30) // refresca si expira en menos de 30 segundos
+  } catch (e) {
+    keycloak.login() // si no puede refrescar, redirige al login
+  }
   if (keycloak.token) {
     config.headers.Authorization = `Bearer ${keycloak.token}`
   }
