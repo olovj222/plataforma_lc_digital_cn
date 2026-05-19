@@ -55,11 +55,7 @@ function CursoForm({ onSubmit, inicial }: Props) {
       <TextField
         label="ID Profesor"
         name="profesorId"
-<<<<<<< HEAD
-        type="text"
-=======
         type="string"
->>>>>>> develop
         value={form.profesorId}
         onChange={handleChange}
       />
