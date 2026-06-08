@@ -40,6 +40,16 @@ public class CursoRestController {
 
     @PostMapping
     public ResponseEntity<Curso> post(@Valid @RequestBody Curso input) throws BusinessRuleException {
+        if (input.getNombre() == null || input.getNombre().isBlank()) {
+        throw new BusinessRuleException(
+            "El nombre del curso es obligatorio", HttpStatus.BAD_REQUEST.value()
+        );
+        }
+        if (input.getCodigo() == null) {
+            throw new BusinessRuleException(
+                "El código del curso es obligatorio", HttpStatus.BAD_REQUEST.value()
+            );
+        }
         boolean codigoExiste = cursoRepository.findAll()
             .stream()
             .anyMatch(c -> c.getCodigo().equals(input.getCodigo()));
