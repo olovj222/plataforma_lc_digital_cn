@@ -4,7 +4,6 @@
  */
 package com.plataforma_lc.asistencia.controller;
 
-// AsistenciaRestControllerTest.java
 import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
 import com.plataforma_lc.asistencia.entities.Asistencia;
 import com.plataforma_lc.asistencia.entities.Clase;
@@ -19,10 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.Date;
+
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.configuration.PropertyConverter;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,18 +35,16 @@ class AsistenciaRestControllerTest {
 
     @InjectMocks private AsistenciaRestController controller;
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private Asistencia asistenciaValida() {
         Asistencia a = new Asistencia();
         a.setId_clase(1L);
         a.setId_estudiante(10L);
         a.setEstado("PRESENT");
-        a.setFecha(null);
+        a.setFecha(PropertyConverter.toDate("10/5/2026", "dd/MM/yyyy"));
         return a;
     }
 
-    // ── GET /asistencia ───────────────────────────────────────────────────────
 
     @Test
     void list_debeRetornarTodasLasAsistencias() {
@@ -61,7 +58,6 @@ class AsistenciaRestControllerTest {
         verify(asistenciaRepository).findAll();
     }
 
-    // ── POST /asistencia ──────────────────────────────────────────────────────
 
     @Test
     void post_debeRetornar400_cuandoClaseNoExiste() {
@@ -87,7 +83,6 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeRetornar400_cuandoEstadoEsInvalido() {
         Asistencia input = asistenciaValida();
         input.setEstado("INVALIDO");
@@ -100,7 +95,6 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeRetornar400_cuandoEstadoEsNulo() {
         Asistencia input = asistenciaValida();
         input.setEstado(null);
@@ -112,7 +106,6 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeRetornar400_cuandoAsistenciaYaExiste() {
         Asistencia input = asistenciaValida();
         when(claseRepository.findById(1L)).thenReturn(Optional.of(new Clase()));
@@ -126,7 +119,6 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeRetornar400_cuandoEstudianteNoExiste() {
         Asistencia input = asistenciaValida();
         when(claseRepository.findById(1L)).thenReturn(Optional.of(new Clase()));
@@ -144,7 +136,6 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeRetornar503_cuandoMsEstudiantesNoDisponible() {
         Asistencia input = asistenciaValida();
         when(claseRepository.findById(1L)).thenReturn(Optional.of(new Clase()));
@@ -161,7 +152,6 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeGuardarYRetornar200_cuandoTodoEsValido() {
         Asistencia input = asistenciaValida();
         Asistencia guardada = asistenciaValida();
@@ -183,10 +173,9 @@ class AsistenciaRestControllerTest {
     }
 
     @Test
-            //mal
     void post_debeNormalizarEstadoAMayusculas() {
         Asistencia input = asistenciaValida();
-        input.setEstado("present");   // minúsculas
+        input.setEstado("present");   
 
         when(claseRepository.findById(1L)).thenReturn(Optional.of(new Clase()));
         when(asistenciaRepository.existeRegistroDuplicado(anyLong(), anyLong(), any()))
@@ -202,7 +191,6 @@ class AsistenciaRestControllerTest {
         assertEquals("PRESENT", input.getEstado());
     }
 
-    // ── PUT /asistencia/{id} ──────────────────────────────────────────────────
 
     @Test
     void put_debeActualizarYRetornar200_cuandoAsistenciaExiste() {
@@ -228,7 +216,6 @@ class AsistenciaRestControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, resp.getStatusCode());
     }
 
-    // ── DELETE /asistencia/{id} ───────────────────────────────────────────────
 
     @Test
     void delete_debeEliminarYRetornar200() {
@@ -240,7 +227,6 @@ class AsistenciaRestControllerTest {
         verify(asistenciaRepository).deleteById(1L);
     }
 
-    // ── GET /asistencia/curso/{id} ────────────────────────────────────────────
 
     @Test
     void consultarPorCurso_debeRetornarListaDeAsistencias() {
@@ -253,7 +239,6 @@ class AsistenciaRestControllerTest {
         assertEquals(1, resp.getBody().size());
     }
 
-    // ── GET /asistencia/estudiante/{id} ──────────────────────────────────────
 
     @Test
     void consultarPorEstudiante_debeRetornarListaDeAsistencias() {
