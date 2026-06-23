@@ -10,7 +10,7 @@ interface AsistenciaFormProps {
 function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
   // Inicializamos los estados. Si es una nueva asistencia, la fecha por defecto será el día de hoy.
   const [id_estudiante, setEstudianteId] = useState<number | ''>('')
-  const [id_curso, setCursoId] = useState<string>('')
+  const [id_clase, setCursoId] = useState<string>('')
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0])
   const [estado, setEstado] = useState('PRESENTE')
 
@@ -18,7 +18,7 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
   useEffect(() => {
     if (inicial) {
       setEstudianteId(inicial.id_estudiante)
-      setCursoId(String(inicial.id_curso))
+      setCursoId(String(inicial.id_clase))
       const fechaObj = new Date(inicial.fecha)
       setFecha(fechaObj.toISOString().split('T')[0])
       setEstado(inicial.estado)
@@ -41,7 +41,7 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
     const datosAsistencia: any = {
         ...(inicial?.id && { id: inicial.id }),
         id_estudiante: Number(id_estudiante),
-        id_curso: Number(id_curso),
+        id_clase: Number(id_clase),
         fecha: fecha, 
         estado
     }
@@ -77,7 +77,7 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
             variant="outlined"
             fullWidth
             required
-            value={id_curso}
+            value={id_clase}
             onChange={(e) => setCursoId(e.target.value)}
       />
 

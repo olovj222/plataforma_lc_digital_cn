@@ -1,6 +1,6 @@
 export interface Asistencia {
     id?: number
-    id_curso: number
+    id_clase: number
     id_estudiante: number
     estado?: string
     fecha?: Date
