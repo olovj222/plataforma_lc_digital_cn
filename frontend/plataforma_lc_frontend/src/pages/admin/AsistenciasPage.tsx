@@ -104,7 +104,7 @@ function AsistenciasPage() {
       
       {/* 3. Curso (ID) - Soporta múltiples formatos del backend */}
       <TableCell>
-        {asistencia.id_curso || '—'}
+        {asistencia.id_clase || '—'}
       </TableCell>
       
       {/* 4. Fecha */}
