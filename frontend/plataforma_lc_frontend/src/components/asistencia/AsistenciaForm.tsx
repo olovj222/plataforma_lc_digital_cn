@@ -53,6 +53,7 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
     <Box
       component="form"
       onSubmit={handleFormSubmit}
+      noValidate
       sx={{
         display: 'flex',
         flexDirection: 'column',
