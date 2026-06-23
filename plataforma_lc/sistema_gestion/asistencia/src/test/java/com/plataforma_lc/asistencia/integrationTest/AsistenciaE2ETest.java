@@ -24,7 +24,7 @@ class AsistenciaE2ETest {
                 "id_clase": 1,
                 "id_estudiante": 10,
                 "estado": "PRESENT",
-                "fecha": "2026-05-11"
+                "fecha": "2026-05-15"
             }
             """;
 
