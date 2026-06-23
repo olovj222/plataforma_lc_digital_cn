@@ -11,6 +11,7 @@ import com.plataforma_lc.evaluaciones.entities.Evaluaciones;
 import com.plataforma_lc.evaluaciones.exception.BusinessRuleException;
 import com.plataforma_lc.evaluaciones.repository.evaluacionesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,6 +22,11 @@ import java.util.List;
  */
 @Service
 public class evaluacionesService {
+    @Value("${ms.curso.url:http://localhost:8081}")
+    private String cursoServiceUrl;
+
+    @Value("${ms.estudiante.url:http://localhost:8080}")
+    private String estudianteServiceUrl;
 
     @Autowired
     private evaluacionesRepository repo;
@@ -29,34 +35,34 @@ public class evaluacionesService {
     private RestTemplate restTemplate;
 
     private void rellenarNombreCurso(Evaluaciones e) {
-        try {
-            CursoResponse curso = restTemplate.getForObject(
-                "http://localhost:8081/curso/" + e.getCursoId(),
-                CursoResponse.class
-            );
-            if (curso != null) {
-                e.setCursoNombre(curso.getNombre());
-            }
-        } catch (Exception ex) {
-            e.setCursoNombre("Información no disponible (MS apagado)");
+    try {
+        CursoResponse curso = restTemplate.getForObject(
+            cursoServiceUrl + "/curso/" + e.getCursoId(),
+            CursoResponse.class
+        );
+        if (curso != null) {
+            e.setCursoNombre(curso.getNombre());
         }
+    } catch (Exception ex) {
+        e.setCursoNombre("Información no disponible (MS apagado)");
     }
+}
 
-    private void rellenarNombreEstudiante(Evaluaciones e) {
-        try {
-            EstudianteResponse estudiante = restTemplate.getForObject(
-                "http://localhost:8080/estudiante/" + e.getEstudianteId(),
-                EstudianteResponse.class
-            );
-            if (estudiante != null) {
-                e.setEstudianteNombre(estudiante.getNombre() + " " + estudiante.getApPaterno());
-            } else {
-                e.setEstudianteNombre("Información no disponible (MS apagado)");
-            }
-        } catch (Exception ex) {
+private void rellenarNombreEstudiante(Evaluaciones e) {
+    try {
+        EstudianteResponse estudiante = restTemplate.getForObject(
+            estudianteServiceUrl + "/estudiante/" + e.getEstudianteId(),
+            EstudianteResponse.class
+        );
+        if (estudiante != null) {
+            e.setEstudianteNombre(estudiante.getNombre() + " " + estudiante.getApPaterno());
+        } else {
             e.setEstudianteNombre("Información no disponible (MS apagado)");
         }
+    } catch (Exception ex) {
+        e.setEstudianteNombre("Información no disponible (MS apagado)");
     }
+}
 
     public Evaluaciones guardar(Evaluaciones e) {
         Evaluaciones guardada = repo.save(e);
