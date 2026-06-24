@@ -21,10 +21,10 @@ class AsistenciaE2ETest {
         // 1. Preparamos el payload
         String jsonPayload = """
             {
-                "id_clase": 1,
-                "id_estudiante": 10,
+                "id_clase": 4,
+                "id_estudiante": 11,
                 "estado": "PRESENT",
-                "fecha": "2026-05-15"
+                "fecha": "2026-06-22"
             }
             """;
 
