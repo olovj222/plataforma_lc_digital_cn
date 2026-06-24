@@ -9,6 +9,7 @@ import com.plataforma_lc.asistencia.entities.EstudianteResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -18,12 +19,16 @@ public class EstudianteClientService {
 
     @Autowired
     private WebClient.Builder webClientBuilder;
-
+    
+    @Value("${ms.estudiante.url:http://localhost:8080}")
+    private String estudianteUrl;
+    
+    
     @CircuitBreaker(name = "estudianteService", fallbackMethod = "fallbackEstudiante") 
     public EstudianteResponse obtenerEstudiante(Long estudianteId) {
         return webClientBuilder.build()
                 .get()
-                .uri("http://localhost:8080/estudiante/{id}", estudianteId)
+                .uri(estudianteUrl+"/estudiante/{id}", estudianteId)
                 .retrieve()
                 .onStatus(
                     status -> status.value() == 404,

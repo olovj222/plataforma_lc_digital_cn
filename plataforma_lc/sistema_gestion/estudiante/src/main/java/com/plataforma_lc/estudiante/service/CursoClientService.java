@@ -11,24 +11,28 @@ package com.plataforma_lc.estudiante.service;
 import com.plataforma_lc.estudiante.entities.CursoResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class CursoClientService {
 
+    @Value("${ms.curso.url:http://localhost:8081}")
+    private String cursoServiceUrl;
+
     @Autowired
     private WebClient.Builder webClientBuilder;
 
     @CircuitBreaker(name = "cursoService", fallbackMethod = "cursoFallback")
     public CursoResponse obtenerCurso(Long cursoId) {
-        return webClientBuilder.build()
-                .get()
-                .uri("http://localhost:8081/curso/{id}", cursoId)
-                .retrieve()
-                .bodyToMono(CursoResponse.class)
-                .block();
-    }
+    return webClientBuilder.build()
+            .get()
+            .uri(cursoServiceUrl + "/curso/{id}", cursoId)
+            .retrieve()
+            .bodyToMono(CursoResponse.class)
+            .block();
+}
 
     public CursoResponse cursoFallback(Long cursoId, Exception ex) {
         CursoResponse fallback = new CursoResponse();

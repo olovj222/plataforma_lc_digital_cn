@@ -23,7 +23,7 @@ function AsistenciaPage() {
   const [error, setError] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [form, setForm] = useState<Asistencia>({
-    id_curso: cursoId,
+    id_clase: cursoId,
     id_estudiante: 0,
     estado: 'PRESENT',
     fecha: new Date()
@@ -49,7 +49,7 @@ function AsistenciaPage() {
     try {
       await createAsistencia(form)
       setDialogOpen(false)
-      setForm({ id_curso: cursoId, id_estudiante: 0, estado: 'PRESENT', fecha: new Date() })
+      setForm({ id_clase: cursoId, id_estudiante: 0, estado: 'PRESENT', fecha: new Date() })
       cargar()
     } catch {
       setError('Error al registrar asistencia.')
