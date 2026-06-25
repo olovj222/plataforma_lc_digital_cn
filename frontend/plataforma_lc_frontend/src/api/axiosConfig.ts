@@ -5,6 +5,10 @@ export const cursoApi = axios.create({
   baseURL: 'http://localhost:8085',
 })
 
+export const claseApi = axios.create({
+  baseURL: 'http://localhost:8085',
+})
+
 export const estudianteApi = axios.create({
   baseURL: 'http://localhost:8085',
 })

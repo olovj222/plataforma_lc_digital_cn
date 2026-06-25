@@ -9,6 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getAsistenciasPorCurso, createAsistencia, deleteAsistencia } from '../../api/asistenciaApi'
 import { getEstudiantes } from '../../api/estudianteApi'
+import { getClasesPorCurso } from '../../api/claseApi' // <-- Agrega esto
+import type { Clase } from '../../types/Clase' // <-- Agrega esto
 import type { Asistencia } from '../../types/Asistencia'
 import type { Estudiante, EstudianteCurso } from '../../types/Estudiante'
 
@@ -19,11 +21,12 @@ function AsistenciaPage() {
 
   const [asistencias, setAsistencias] = useState<Asistencia[]>([])
   const [estudiantes, setEstudiantes] = useState<Estudiante[]>([])
+  const [clases, setClases] = useState<Clase[]>([]) // <-- Nuevo estado
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [form, setForm] = useState<Asistencia>({
-    id_clase: cursoId,
+    id_clase: 0,
     id_estudiante: 0,
     estado: 'PRESENT',
     fecha: new Date()
@@ -32,12 +35,14 @@ function AsistenciaPage() {
   const cargar = async () => {
     setLoading(true)
     try {
-      const [asis, todos] = await Promise.all([
+      const [asis, todos, clasesDelCurso] = await Promise.all([
         getAsistenciasPorCurso(cursoId),
-        getEstudiantes()
+        getEstudiantes(),
+        getClasesPorCurso(cursoId) // <-- Traemos las sesiones de clase
       ])
       setAsistencias(asis)
       setEstudiantes(todos.filter((e: Estudiante) => e.cursos.some((c: EstudianteCurso) => Number(c.cursoId) === cursoId)))
+      setClases(clasesDelCurso) // <-- Guardamos las sesiones
     } finally {
       setLoading(false)
     }
@@ -113,6 +118,20 @@ function AsistenciaPage() {
         <DialogTitle>Registrar Asistencia</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1, minWidth: 350 }}>
+            <FormControl fullWidth>
+              <InputLabel>Clase (Sesión)</InputLabel>
+              <Select
+                value={form.id_clase || ''}
+                label="Clase (Sesión)"
+                onChange={e => setForm(prev => ({ ...prev, id_clase: Number(e.target.value) }))}
+              >
+                {clases.map(c => (
+                  <MenuItem key={c.id} value={c.id!}>
+                    {c.fecha ? String(c.fecha).split('T')[0] : ''} - {c.descripcion || 'Clase sin descripción'}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <FormControl>
               <InputLabel>Estudiante</InputLabel>
               <Select

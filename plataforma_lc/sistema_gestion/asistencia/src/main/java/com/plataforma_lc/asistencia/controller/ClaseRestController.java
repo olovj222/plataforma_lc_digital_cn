@@ -71,7 +71,7 @@ public class ClaseRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> put(@PathVariable Long id, @RequestBody Clase input) {
+    public ResponseEntity<?> put(@PathVariable("id") Long id, @RequestBody Clase input) {
         Optional<Clase> opt = claseRepository.findById(id);
         if (opt.isPresent()) {
             Clase clase = opt.get();
@@ -84,13 +84,13 @@ public class ClaseRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         claseRepository.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/curso/{cursoId}")
-    public ResponseEntity<List<Clase>> porCurso(@PathVariable Long cursoId) {
+    public ResponseEntity<List<Clase>> porCurso(@PathVariable("cursoId") Long cursoId) {
         return ResponseEntity.ok(claseRepository.buscarPorCurso(cursoId));
     }
 }
