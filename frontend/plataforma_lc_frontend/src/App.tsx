@@ -15,6 +15,8 @@ import EstudiantesPage from './pages/admin/EstudiantesPage'
 import DetalleCursoPage from './pages/profesor/DetalleCursoPage'
 import AsistenciaPage from './pages/profesor/AsistenciasPage'
 import AsistenciasPage from './pages/admin/AsistenciasPage'
+import ClasesPage from './pages/admin/ClasesPage'
+import ClasesProfesorPage from './pages/profesor/ClasesProfesorPage'
 
 
 function App() {
@@ -35,6 +37,7 @@ function App() {
             <Route path="cursos" element={isAdmin ? <CursosPage /> : <Navigate to="/" />} />
             <Route path="estudiantes" element={isAdmin ? <EstudiantesPage /> : <Navigate to="/" />} />
             <Route path="asistencia" element={isAdmin ? <AsistenciasPage /> : <Navigate to="/" />} />
+            <Route path="clase" element={isAdmin ? <ClasesPage /> : <Navigate to="/" />} />
           </Route>
           <Route path="profesor">
             <Route index element={<ProfesorLoginPage />} />
@@ -42,6 +45,7 @@ function App() {
             <Route path="mis-cursos/:id" element={isProfesor ? <DetalleCursoPage /> : <Navigate to="/" />} />
             <Route path="mis-cursos/:id/evaluaciones" element={isProfesor ? <EvaluacionesPage /> : <Navigate to="/" />} />
             <Route path="mis-cursos/:id/asistencia" element={isProfesor ? <AsistenciaPage /> : <Navigate to="/" />} />
+            <Route path="mis-cursos/:id/clase" element={isProfesor ? <ClasesProfesorPage /> : <Navigate to="/" />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Route>

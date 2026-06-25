@@ -104,7 +104,6 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
           <MenuItem value="PRESENT">PRESENT</MenuItem>
           <MenuItem value="ABSENT">ABSENT</MenuItem>
           <MenuItem value="JUSTIFIED">JUSTIFIED</MenuItem>
-          <MenuItem value="ATRASO">Atraso</MenuItem>
         </Select>
       </FormControl>
 

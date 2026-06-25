@@ -54,6 +54,9 @@ function DetalleCursoPage() {
         <Button variant="outlined" onClick={() => navigate(`/profesor/mis-cursos/${id}/evaluaciones`)}>
           Registrar Evaluaciones
         </Button>
+        <Button variant="outlined" onClick={() => navigate(`/profesor/mis-cursos/${id}/clase`)}>
+          Ver Clases
+        </Button>
       </Box>
 
       <Typography variant="h6" sx={{ mb: 2 }}>Estudiantes</Typography>
