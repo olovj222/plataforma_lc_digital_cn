@@ -1,2 +1,4 @@
 /plataforma_lc/sistema_gestion/asistencia/nbproject/
 **/logs/*.log
+**/logs/*.log
+**/logs/*.gz
