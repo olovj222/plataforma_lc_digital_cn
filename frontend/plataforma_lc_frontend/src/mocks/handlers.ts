@@ -12,6 +12,16 @@ export const handlers = [
     ])
   }),
 
+  http.get(`${GATEWAY_URL}/clase/curso/:id`, () => {
+  return HttpResponse.json([
+    {
+      id: 1,
+      fecha: '2026-06-23',
+      descripcion: 'Clase de introducción'
+    }
+  ])
+}),
+
   // Intercepta estudianteApi.get('/')
   http.get(`${GATEWAY_URL}/estudiante`, () => {
     return HttpResponse.json([
