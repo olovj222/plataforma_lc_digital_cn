@@ -5,3 +5,7 @@ target/
 *.war
 .nb-gradle/
 nbproject/private/
+logs/
+*.log
+*.log.*
+eureka-server/logs/eureka.log
