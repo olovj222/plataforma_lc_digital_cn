@@ -36,6 +36,13 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   const textareaDescripcion = page.getByRole('textbox', { name: 'Descripción de la clase' });
   await textareaDescripcion.focus();
   await textareaDescripcion.fill(descripcion);
+  await expect(textareaDescripcion).toHaveValue(descripcion);
+  page.on('response', response => {
+  if (response.url().includes('/clase')) {
+    console.log('Clase status:', response.status());
+    response.text().then(body => console.log('Clase body:', body)).catch(() => {});
+  }
+});
   await page.getByRole('dialog').getByRole('button', { name: /registrar clase/i }).click();
   await expect(page.getByRole('dialog')).toBeHidden();
 
@@ -92,9 +99,9 @@ await page.locator('input[type="date"]').fill(fechaHoy);
     response.text().then(body => console.log('Asistencia body:', body)).catch(() => {});
   }
 });
+
 await page.getByRole('button', { name: /guardar/i }).click({ force: true });
-  await page.getByRole('button', { name: /guardar/i }).click({ force: true });
-  await expect(page.getByRole('dialog')).toBeHidden();
+await expect(page.getByRole('dialog')).toBeHidden();
 
   // ─── PARTE 11: VERIFICAR QUE APARECE EN LA TABLA ─────────────────────────
   const filaAsistencia = page.getByRole('cell', { name: new RegExp(nombreEstudiante || '', 'i') }).first();
