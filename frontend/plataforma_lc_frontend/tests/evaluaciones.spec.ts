@@ -13,6 +13,7 @@ async function login(page: any, username: string, password: string) {
 
 test('Flujo E2E: Profesor crea una evaluación y la elimina', async ({ page }) => {
   test.slow();
+  await page.waitForTimeout(20000);
 
   // ─── PARTE 1: LOGIN COMO PROFESOR ────────────────────────────────────────
   await page.goto('/');
