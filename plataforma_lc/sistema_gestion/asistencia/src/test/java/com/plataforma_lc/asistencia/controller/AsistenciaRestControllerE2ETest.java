@@ -23,7 +23,7 @@ class AsistenciaRestControllerE2ETest {
                 "id_clase": 4,
                 "id_estudiante": 11,
                 "estado": "PRESENT",
-                "fecha": "2026-06-03"
+                "fecha": "2028-06-21"
             }
             """;
 

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial'});
 // ─── HELPER: LOGIN ───────────────────────────────────────────────────────────
 async function login(page: any, username: string, password: string) {
   await page.waitForSelector('input[name="username"]');
@@ -13,8 +14,13 @@ async function login(page: any, username: string, password: string) {
 
 test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', async ({ page }) => {
   test.slow();
+  
+  // ⏱️ Sincronización de Infraestructura (Eureka & Gateway)
+  await page.waitForTimeout(20000);
 
   // ─── PARTE 1: LOGIN COMO ADMIN Y CREAR CLASE ─────────────────────────────
+  await page.request.get('/asistencia/actuator/health').catch(() => {}); 
+  await page.waitForTimeout(5000); // 5 segundos de colchón térmico
   await page.goto('/');
   await login(page, 'admin1', 'admin123');
 
@@ -37,13 +43,22 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   await textareaDescripcion.focus();
   await textareaDescripcion.fill(descripcion);
   await expect(textareaDescripcion).toHaveValue(descripcion);
-  page.on('response', response => {
-  if (response.url().includes('/clase')) {
-    console.log('Clase status:', response.status());
-    response.text().then(body => console.log('Clase body:', body)).catch(() => {});
-  }
-});
+
+  // 🔄 Captura segura del POST a /clase usando Promesas nativas de Playwright
+  const respuestaClasePromise = page.waitForResponse(
+    response => response.url().includes('/clase') && response.request().method() === 'POST',
+    { timeout: 10000 }
+  );
+
   await page.getByRole('dialog').getByRole('button', { name: /registrar clase/i }).click();
+  
+  const respuestaClase = await respuestaClasePromise;
+  console.log('Clase status:', respuestaClase.status());
+  const textoRespuesta = await respuestaClase.text();
+  console.log('👉 [E2E TEST] Código HTTP de Clase:', respuestaClase.status());
+  console.log('👉 [E2E TEST] Cuerpo de respuesta de Clase:', textoRespuesta);
+
+  // Si se queda aquí, el log de arriba te dirá en tu terminal la causa exacta (ej. un campo mal mapeado)
   await expect(page.getByRole('dialog')).toBeHidden();
 
   // Verificamos que la clase aparece en la tabla
@@ -65,43 +80,48 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Registrar Asistencia' })).toBeVisible();
 
-// ─── PARTE 6: SELECCIONAR CLASE ──────────────────────────────────────────
-await page.locator('label:has-text("Clase (Sesión)") + .MuiInputBase-root').click();
-const primeraClase = page.locator('li[role="option"]').first();
-await expect(primeraClase).toBeVisible();
-await primeraClase.click({ force: true });
-await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
+  // ─── PARTE 6: SELECCIONAR CLASE ──────────────────────────────────────────
+  await page.locator('label:has-text("Clase (Sesión)") + .MuiInputBase-root').click();
+  const primeraClase = page.locator('li[role="option"]').first();
+  await expect(primeraClase).toBeVisible();
+  await primeraClase.click({ force: true });
+  await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
 
-// ─── PARTE 7: SELECCIONAR ESTUDIANTE ─────────────────────────────────────
-await page.locator('label:has-text("Estudiante") + .MuiInputBase-root').click();
-const primerEstudiante = page.locator('li[role="option"]').first();
-await expect(primerEstudiante).toBeVisible();
-const nombreEstudiante = await primerEstudiante.textContent();
-await primerEstudiante.click({ force: true });
-await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
+  // ─── PARTE 7: SELECCIONAR ESTUDIANTE ─────────────────────────────────────
+  await page.locator('label:has-text("Estudiante") + .MuiInputBase-root').click();
+  const primerEstudiante = page.locator('li[role="option"]').first();
+  await expect(primerEstudiante).toBeVisible();
+  const nombreEstudiante = await primerEstudiante.textContent();
+  await primerEstudiante.click({ force: true });
+  await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
 
-// ─── PARTE 8: SELECCIONAR ESTADO ─────────────────────────────────────────
-await page.locator('label:has-text("Estado") + .MuiInputBase-root').click();
-await page.locator('li:has-text("Presente")').click({ force: true });
-await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
-// ─── PARTE 9: INGRESAR FECHA ─────────────────────────────────────────────
-await expect(page.locator('.MuiBackdrop-invisible')).toBeHidden();
-await page.locator('input[type="date"]').fill(fechaHoy);
+  // ─── PARTE 8: SELECCIONAR ESTADO ─────────────────────────────────────────
+  await page.locator('label:has-text("Estado") + .MuiInputBase-root').click();
+  await page.locator('li:has-text("Presente")').click({ force: true });
+  await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
+  
+  // ─── PARTE 9: INGRESAR FECHA ─────────────────────────────────────────────
+  await expect(page.locator('.MuiBackdrop-invisible')).toBeHidden();
+  await page.locator('input[type="date"]').fill(fechaHoy);
 
   // ─── PARTE 10: GUARDAR ───────────────────────────────────────────────────
   const valorClase = await page.locator('label:has-text("Clase (Sesión)") + .MuiInputBase-root').locator('input').inputValue();
   console.log('Valor clase seleccionado:', valorClase);
   const valorEstudiante = await page.locator('label:has-text("Estudiante") + .MuiInputBase-root').locator('input').inputValue();
   console.log('Valor estudiante seleccionado:', valorEstudiante);
-  page.on('response', response => {
-  if (response.url().includes('/asistencia')) {
-    console.log('Asistencia status:', response.status());
-    response.text().then(body => console.log('Asistencia body:', body)).catch(() => {});
-  }
-});
 
-await page.getByRole('button', { name: /guardar/i }).click({ force: true });
-await expect(page.getByRole('dialog')).toBeHidden();
+  // 🔄 Captura segura del POST a /asistencia evitando bloqueos asíncronos globales
+  const respuestaAsistenciaPromise = page.waitForResponse(
+    response => response.url().includes('/asistencia') && response.request().method() === 'POST',
+    { timeout: 10000 }
+  );
+
+  await page.getByRole('button', { name: /guardar/i }).click({ force: true });
+
+  const respuestaAsistencia = await respuestaAsistenciaPromise;
+  console.log('Asistencia status:', respuestaAsistencia.status());
+
+  await expect(page.getByRole('dialog')).toBeHidden();
 
   // ─── PARTE 11: VERIFICAR QUE APARECE EN LA TABLA ─────────────────────────
   const filaAsistencia = page.getByRole('cell', { name: new RegExp(nombreEstudiante || '', 'i') }).first();

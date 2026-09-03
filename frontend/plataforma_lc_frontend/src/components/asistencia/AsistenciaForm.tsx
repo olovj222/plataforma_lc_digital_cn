@@ -8,33 +8,32 @@ interface AsistenciaFormProps {
 }
 
 function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
-  // Inicializamos los estados. Si es una nueva asistencia, la fecha por defecto será el día de hoy.
+  // ─── CORRECCIÓN 1: Unificamos el estado inicial a "PRESENT" (Match con backend) ───
   const [id_estudiante, setEstudianteId] = useState<number | ''>('')
-  const [id_clase, setCursoId] = useState<string>('')
+  const [id_clase, setClaseId] = useState<string>('')
   const [fecha, setFecha] = useState(new Date().toISOString().split('T')[0])
-  const [estado, setEstado] = useState('PRESENTE')
+  const [estado, setEstado] = useState('PRESENT')
 
-  // Efecto para cargar los datos del estudiante si se entra en modo edición
   useEffect(() => {
     if (inicial) {
       setEstudianteId(inicial.id_estudiante)
-      setCursoId(String(inicial.id_clase))
+      setClaseId(String(inicial.id_clase))
       const fechaObj = new Date(inicial.fecha)
       setFecha(fechaObj.toISOString().split('T')[0])
       setEstado(inicial.estado)
     } else {
-      // Resetear al estado inicial si pasa de editar a crear nuevo
       setEstudianteId('')
+      setClaseId('')
       setFecha(new Date().toISOString().split('T')[0])
       setEstado('PRESENT')
     }
   }, [inicial])
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (id_estudiante === '') {
-      alert('Por favor, ingresa el ID del estudiante.')
+    if (id_estudiante === '' || id_clase === '') {
+      alert('Por favor, ingresa todos los campos obligatorios.')
       return
     }
 
@@ -46,7 +45,8 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
         estado
     }
 
-    onSubmit(datosAsistencia)
+    // Esperamos a que la petición termine antes de que el flujo continúe
+    await onSubmit(datosAsistencia)
   }
 
   return (
@@ -58,7 +58,7 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
         display: 'flex',
         flexDirection: 'column',
         gap: 3,
-        pt: 1, // Espacio para que no choque con el título del Dialog
+        pt: 1, 
         minWidth: { sm: 400 }
       }}
     >
@@ -72,14 +72,15 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
         onChange={(e) => setEstudianteId(e.target.value !== '' ? Number(e.target.value) : '')}
       />
 
-    <TextField
-            label="ID del Curso"
-            type="number"
-            variant="outlined"
-            fullWidth
-            required
-            value={id_clase}
-            onChange={(e) => setCursoId(e.target.value)}
+      {/* ─── CORRECCIÓN 2: Cambiado "ID del Curso" a "ID de la Clase" para alinearse con id_clase ─── */}
+      <TextField
+        label="ID de la Clase"
+        type="number"
+        variant="outlined"
+        fullWidth
+        required
+        value={id_clase}
+        onChange={(e) => setClaseId(e.target.value)}
       />
 
       <TextField
