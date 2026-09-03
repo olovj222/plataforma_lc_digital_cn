@@ -25,12 +25,19 @@ function Navbar() {
               </Button>
               <Button color="inherit" onClick={() => navigate('/admin/asistencia')}>
                 Asistencia
-                </Button>
+              </Button>
               <Button color="inherit" onClick={() => navigate('/admin/clase')}>
                 Clase
-                </Button>
+              </Button>
+              <Button color="inherit" onClick={() => navigate('/admin/justificativos')}>
+                Justificativos
+              </Button>
+              <Button color="inherit" onClick={() => navigate('/admin/anotaciones')}>
+                Anotaciones
+              </Button>
             </>
           )}
+
           {isProfesor && (
             <Button color="inherit" onClick={() => navigate('/profesor/mis-cursos')}>
               Mis Cursos

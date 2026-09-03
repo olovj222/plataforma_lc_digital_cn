@@ -17,6 +17,10 @@ import AsistenciaPage from './pages/profesor/AsistenciasPage'
 import AsistenciasPage from './pages/admin/AsistenciasPage'
 import ClasesPage from './pages/admin/ClasesPage'
 import ClasesProfesorPage from './pages/profesor/ClasesProfesorPage'
+import JustificativosPage from './pages/admin/JustificativosPage'
+import AnotacionesPage from './pages/admin/AnotacionesPage'
+import JustificativosProfesorPage from './pages/profesor/JustificativosProfesorPage'
+import AnotacionesProfesorPage from './pages/profesor/AnotacionesProfesorPage'
 
 
 function App() {
@@ -38,6 +42,8 @@ function App() {
             <Route path="estudiantes" element={isAdmin ? <EstudiantesPage /> : <Navigate to="/" />} />
             <Route path="asistencia" element={isAdmin ? <AsistenciasPage /> : <Navigate to="/" />} />
             <Route path="clase" element={isAdmin ? <ClasesPage /> : <Navigate to="/" />} />
+            <Route path="justificativos" element={isAdmin ? <JustificativosPage /> : <Navigate to="/" />} />
+            <Route path="anotaciones" element={isAdmin ? <AnotacionesPage /> : <Navigate to="/" />} />
           </Route>
           <Route path="profesor">
             <Route index element={<ProfesorLoginPage />} />
@@ -46,6 +52,8 @@ function App() {
             <Route path="mis-cursos/:id/evaluaciones" element={isProfesor ? <EvaluacionesPage /> : <Navigate to="/" />} />
             <Route path="mis-cursos/:id/asistencia" element={isProfesor ? <AsistenciaPage /> : <Navigate to="/" />} />
             <Route path="mis-cursos/:id/clase" element={isProfesor ? <ClasesProfesorPage /> : <Navigate to="/" />} />
+            <Route path="mis-cursos/:id/justificativos" element={isProfesor ? <JustificativosProfesorPage /> : <Navigate to="/" />} />
+            <Route path="mis-cursos/:id/anotaciones" element={isProfesor ? <AnotacionesProfesorPage /> : <Navigate to="/" />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
