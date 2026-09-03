@@ -16,6 +16,7 @@
         <module>curso</module>
         <module>evaluaciones</module>
         <module>justificativos</module>
+        <module>anotaciones</module>
     </modules>
     <dependencies>
         <!-- Dependencias que quieras que hereden los hijos de businessdomain -->
