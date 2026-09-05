@@ -11,11 +11,13 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserContextFilter implements GlobalFilter, Ordered {
 
     @Override
+    @SuppressWarnings("unchecked")
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         return exchange.getPrincipal()
             .cast(JwtAuthenticationToken.class)
@@ -23,11 +25,14 @@ public class UserContextFilter implements GlobalFilter, Ordered {
                 Jwt jwt = (Jwt) auth.getPrincipal();
                 String userId = jwt.getSubject();
 
-                List<String> roles = jwt.getClaimAsStringList("roles");
-                String rolesHeader = (roles == null || roles.isEmpty())
-                    ? ""
-                    : String.join(",", roles);
-
+                String rolesHeader = "";
+                Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
+                if (realmAccess != null && realmAccess.get("roles") instanceof List<?> rawRoles) {
+                    rolesHeader = String.join(",", (List<String>) rawRoles);
+                }
+// TODO: cambiar al migrar a Entra ID:
+                // List<String> roles = jwt.getClaimAsStringList("roles");
+//rolesHeader = (roles == null) ? "" : String.join(",", roles);
                 ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .header("X-User-Id", userId)
                     .header("X-User-Roles", rolesHeader)
@@ -35,12 +40,12 @@ public class UserContextFilter implements GlobalFilter, Ordered {
 
                 return exchange.mutate().request(mutatedRequest).build();
             })
-            .defaultIfEmpty(exchange) // por si algún endpoint quedara público en el futuro
+            .defaultIfEmpty(exchange)
             .flatMap(chain::filter);
     }
 
     @Override
     public int getOrder() {
-        return 0; // corre después del LoggingFilter (-1), antes de reenviar la petición
+        return 0;
     }
 }
