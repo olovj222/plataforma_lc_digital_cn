@@ -60,3 +60,295 @@
 2026-09-05 19:07:58 [main] INFO  org.springframework.boot.web.embedded.netty.NettyWebServer - Netty started on port 8085
 2026-09-05 19:07:58 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration - Updating port to 8085
 2026-09-05 19:07:58 [main] INFO  com.plataforma_lc.apiGateway.ApiGatewayApplication - Started ApiGatewayApplication in 3.722 seconds (process running for 4.075)
+2026-09-05 19:21:46 [main] INFO  com.plataforma_lc.apiGateway.ApiGatewayApplication - Starting ApiGatewayApplication using Java 23 with PID 8732 (C:\Users\Olov\Desktop\CloudNative\plataforma_lc_digital_cn\plataforma_lc\sistema_infra\apiGateway\target\classes started by Olov in C:\Users\Olov\Desktop\CloudNative\plataforma_lc_digital_cn\plataforma_lc\sistema_infra\apiGateway)
+2026-09-05 19:21:46 [main] INFO  com.plataforma_lc.apiGateway.ApiGatewayApplication - No active profile set, falling back to 1 default profile: "default"
+2026-09-05 19:21:47 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=6549c55f-19ac-37e4-8502-a9bffbfc6aca
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$LoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$LoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration' of type [org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration' of type [org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.commons.config.CommonsConfigAutoConfiguration' of type [org.springframework.cloud.commons.config.CommonsConfigAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerDefaultMappingsProviderAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerDefaultMappingsProviderAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'loadBalancerClientsDefaultsMappingsProvider' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerDefaultMappingsProviderAutoConfiguration$$Lambda/0x0000017dc6399398] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'defaultsBindHandlerAdvisor' of type [org.springframework.cloud.commons.config.DefaultsBindHandlerAdvisor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'spring.cloud.loadbalancer-org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerClientsProperties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'default.org.springframework.cloud.loadbalancer.config.LoadBalancerAutoConfiguration.LoadBalancerClientSpecification' of type [org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientSpecification] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'default.org.springframework.cloud.loadbalancer.config.BlockingLoadBalancerClientAutoConfiguration.LoadBalancerClientSpecification' of type [org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientSpecification] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'default.org.springframework.cloud.netflix.eureka.loadbalancer.LoadBalancerEurekaAutoConfiguration.LoadBalancerClientSpecification' of type [org.springframework.cloud.loadbalancer.annotation.LoadBalancerClientSpecification] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'loadBalancerClientFactory' of type [org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'blockingLoadBalancerClient' of type [org.springframework.cloud.loadbalancer.blocking.client.BlockingLoadBalancerClient] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'loadBalancerServiceInstanceCookieTransformer' of type [org.springframework.cloud.loadbalancer.core.LoadBalancerServiceInstanceCookieTransformer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'xForwarderHeadersTransformer' of type [org.springframework.cloud.loadbalancer.blocking.XForwardedHeadersTransformer] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'loadBalancerRequestFactory' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerRequestFactory] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'loadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration' of type [org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration$ReactorDeferringLoadBalancerFilterConfig' of type [org.springframework.cloud.client.loadbalancer.reactive.LoadBalancerBeanPostProcessorAutoConfiguration$ReactorDeferringLoadBalancerFilterConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:47 [main] WARN  org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'reactorDeferringLoadBalancerExchangeFilterFunction' of type [org.springframework.cloud.client.loadbalancer.reactive.DeferringLoadBalancerExchangeFilterFunction] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [loadBalancerWebClientBuilderBeanPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [After]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Before]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Between]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Cookie]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Header]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Host]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Method]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Path]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Query]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [ReadBody]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [RemoteAddr]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [XForwardedRemoteAddr]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [Weight]
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator - Loaded RoutePredicateFactory [CloudFoundryRouteService]
+2026-09-05 19:21:48 [main] INFO  org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver - Exposing 17 endpoint(s) beneath base path '/actuator'
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2026-09-05 19:21:48 [main] WARN  org.springframework.cloud.loadbalancer.config.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-09-05 19:21:48 [main] INFO  org.springframework.cloud.netflix.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2026-09-05 19:21:48 [main] INFO  com.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2026-09-05 19:21:48 [main] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Disable delta property : false
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Application is null : false
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Application version is -1: true
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - The response status is 200
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1788650509432 with initial instances count: 2
+2026-09-05 19:21:49 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaServiceRegistry - Registering application APIGATEWAY with eureka with status UP
+2026-09-05 19:21:49 [main] INFO  com.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1788650509434, current=UP, previous=STARTING]
+2026-09-05 19:21:49 [DiscoveryClient-InstanceInfoReplicator-0] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_APIGATEWAY/host.docker.internal:apiGateway:8085: registering service...
+2026-09-05 19:21:49 [DiscoveryClient-InstanceInfoReplicator-0] INFO  com.netflix.discovery.DiscoveryClient - DiscoveryClient_APIGATEWAY/host.docker.internal:apiGateway:8085 - registration status: 204
+2026-09-05 19:21:49 [main] INFO  org.springframework.boot.web.embedded.netty.NettyWebServer - Netty started on port 8085
+2026-09-05 19:21:49 [main] INFO  org.springframework.cloud.netflix.eureka.serviceregistry.EurekaAutoServiceRegistration - Updating port to 8085
+2026-09-05 19:21:49 [main] INFO  com.plataforma_lc.apiGateway.ApiGatewayApplication - Started ApiGatewayApplication in 4.013 seconds (process running for 4.511)
+2026-09-05 19:25:09 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:09 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:10 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:10 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:13 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:13 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:13 [reactor-http-nio-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:13 [reactor-http-nio-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:39 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:39 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:39 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:39 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:42 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:42 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:42 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:42 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:42 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:42 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:43 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:43 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:48 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:48 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:25:48 [reactor-http-nio-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:25:48 [reactor-http-nio-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:02 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:02 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:02 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:02 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:02 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:02 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:02 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:02 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:04 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:04 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:04 [reactor-http-nio-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:04 [reactor-http-nio-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:17 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:17 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:17 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:17 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:17 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:17 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:17 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:17 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:18 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:18 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:18 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:18 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:18 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:18 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:19 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:19 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:31 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:31 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:31 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:31 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:31 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:31 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:35 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:35 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:35 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:35 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:35 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:35 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:35 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:35 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:37 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:37 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:37 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:37 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:38 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:38 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:38 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:38 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:38 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:38 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:39 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:39 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:43 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:43 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:43 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:43 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:45 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:45 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:45 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:45 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:45 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:45 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:45 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:45 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:47 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:47 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:47 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:47 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:47 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:47 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:47 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:47 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:49 [AsyncResolver-bootstrap-executor-0] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-09-05 19:26:55 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:55 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:55 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:55 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:26:55 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:26:55 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:00 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:00 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:00 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:00 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:00 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:00 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:00 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:00 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:02 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:02 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:02 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:02 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:02 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:02 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:02 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:02 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:02 [reactor-http-nio-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:02 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:02 [reactor-http-nio-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:02 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:14 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:14 [reactor-http-nio-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:14 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:14 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:14 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:14 [reactor-http-nio-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:14 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:14 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:29 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:29 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:29 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:29 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:29 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:29 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:29 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:29 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:32 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:32 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:27:32 [reactor-http-nio-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:27:32 [reactor-http-nio-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:31:49 [AsyncResolver-bootstrap-executor-0] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-09-05 19:34:53 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:53 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:53 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:53 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:55 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:55 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:55 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:55 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:55 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:55 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:55 [reactor-http-nio-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:55 [reactor-http-nio-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:57 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:57 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:34:57 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:34:57 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:13 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:13 [reactor-http-nio-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:13 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:13 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:37 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:37 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:37 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:37 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:38 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:38 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:38 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:38 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:38 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:38 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:38 [reactor-http-nio-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:38 [reactor-http-nio-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:39 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:39 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:39 [reactor-http-nio-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:39 [reactor-http-nio-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:54 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:54 [reactor-http-nio-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:35:54 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:35:54 [reactor-http-nio-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:36:49 [AsyncResolver-bootstrap-executor-0] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-09-05 19:36:56 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:36:56 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:36:56 [reactor-http-nio-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:36:56 [reactor-http-nio-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:36:58 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:36:58 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:36:58 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:36:58 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:37:04 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:37:04 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:37:28 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:37:28 [parallel-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:37:28 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:37:28 [reactor-http-nio-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:40:06 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:40:06 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:40:06 [reactor-http-nio-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:40:06 [reactor-http-nio-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:41:49 [AsyncResolver-bootstrap-executor-0] INFO  com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2026-09-05 19:45:15 [parallel-11] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:15 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:15 [reactor-http-nio-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:15 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:26 [parallel-2] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:26 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:26 [parallel-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:26 [reactor-http-nio-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:57 [parallel-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:57 [parallel-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:57 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:57 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:58 [parallel-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:58 [parallel-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:58 [reactor-http-nio-5] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:58 [reactor-http-nio-6] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:58 [parallel-9] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:58 [parallel-10] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:45:58 [reactor-http-nio-7] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:45:58 [reactor-http-nio-8] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:46:00 [parallel-12] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:46:00 [parallel-1] INFO  com.plataforma_lc.apiGateway.setups.GlobalPreFiltering - Global Pre filtering executed
+2026-09-05 19:46:00 [reactor-http-nio-3] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed
+2026-09-05 19:46:00 [reactor-http-nio-4] INFO  com.plataforma_lc.apiGateway.setups.GlobalPostFiltering - Global Post filtering executed

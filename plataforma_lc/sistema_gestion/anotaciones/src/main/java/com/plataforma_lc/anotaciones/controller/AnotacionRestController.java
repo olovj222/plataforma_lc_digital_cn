@@ -31,31 +31,31 @@ public class AnotacionRestController {
     }
 
     @GetMapping("/estudiante/{estudianteId}")
-    public ResponseEntity<List<Anotacion>> porEstudiante(@PathVariable Long estudianteId,
+    public ResponseEntity<List<Anotacion>> porEstudiante(@PathVariable("estudianteId") Long estudianteId,
                                                            @RequestHeader("X-User-Roles") String roles) {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByEstudianteId(estudianteId));
     }
 
     @GetMapping("/curso/{cursoId}")
-    public ResponseEntity<List<Anotacion>> porCurso(@PathVariable Long cursoId,
+    public ResponseEntity<List<Anotacion>> porCurso(@PathVariable("cursoId") Long cursoId,
                                                       @RequestHeader("X-User-Roles") String roles) {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByCursoId(cursoId));
     }
 
     @GetMapping("/estudiante/{estudianteId}/tipo/{tipo}")
-    public ResponseEntity<List<Anotacion>> porEstudianteYTipo(@PathVariable Long estudianteId,
-                                                                @PathVariable TipoAnotacion tipo,
+    public ResponseEntity<List<Anotacion>> porEstudianteYTipo(@PathVariable("estudianteId") Long estudianteId,
+                                                                @PathVariable("tipo") TipoAnotacion tipo,
                                                                 @RequestHeader("X-User-Roles") String roles) {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByEstudianteIdAndTipo(estudianteId, tipo));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id,
+    public ResponseEntity<Void> eliminar(@PathVariable("id") Long id,
                                           @RequestHeader("X-User-Roles") String roles) {
-        requireRole(roles, "ADMIN"); // solo Admin puede borrar, evita que un profesor elimine evidencia
+        requireRole(roles, "ADMIN");
 
         Anotacion anotacion = repository.findById(id)
             .orElseThrow(() -> new BusinessRuleException(

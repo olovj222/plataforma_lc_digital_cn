@@ -33,37 +33,35 @@ public class JustificativoRestController {
     }
 
     @GetMapping("/estudiante/{estudianteId}")
-    public ResponseEntity<List<Justificativo>> porEstudiante(@PathVariable Long estudianteId,
-                                                               @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<List<Justificativo>> porEstudiante(@PathVariable("estudianteId") Long estudianteId,
+                                                               @RequestHeader("X-User-Roles") String roles) {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByEstudianteId(estudianteId));
     }
 
     @GetMapping("/curso/{cursoId}")
-    public ResponseEntity<List<Justificativo>> porCurso(@PathVariable Long cursoId,
-                                                          @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<List<Justificativo>> porCurso(@PathVariable("cursoId") Long cursoId,
+                                                          @RequestHeader("X-User-Roles") String roles) {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByCursoId(cursoId));
     }
-
     @GetMapping("/pendientes")
-    public ResponseEntity<List<Justificativo>> pendientes(@RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<List<Justificativo>> pendientes(@RequestHeader("X-User-Roles") String roles) {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(repository.findByEstado(EstadoJustificativo.PENDIENTE));
     }
-
     @PutMapping("/{id}/aprobar")
-    public ResponseEntity<Justificativo> aprobar(@PathVariable Long id,
+    public ResponseEntity<Justificativo> aprobar(@PathVariable("id") Long id,
                                                   @RequestHeader("X-User-Id") String userId,
-                                                  @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+                                                  @RequestHeader("X-User-Roles") String roles) {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(resolver(id, EstadoJustificativo.APROBADO, userId));
     }
 
     @PutMapping("/{id}/rechazar")
-    public ResponseEntity<Justificativo> rechazar(@PathVariable Long id,
+    public ResponseEntity<Justificativo> rechazar(@PathVariable("id") Long id,
                                                    @RequestHeader("X-User-Id") String userId,
-                                                   @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+                                                   @RequestHeader("X-User-Roles") String roles) {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(resolver(id, EstadoJustificativo.RECHAZADO, userId));
     }
