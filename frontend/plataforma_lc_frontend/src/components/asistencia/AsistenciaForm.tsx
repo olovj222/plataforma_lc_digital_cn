@@ -18,9 +18,9 @@ function AsistenciaForm({ onSubmit, inicial }: AsistenciaFormProps) {
     if (inicial) {
       setEstudianteId(inicial.id_estudiante)
       setClaseId(String(inicial.id_clase))
-      const fechaObj = new Date(inicial.fecha)
+      const fechaObj = new Date(inicial.fecha ?? new Date()) 
       setFecha(fechaObj.toISOString().split('T')[0])
-      setEstado(inicial.estado)
+      setEstado(inicial.estado ?? '')
     } else {
       setEstudianteId('')
       setClaseId('')

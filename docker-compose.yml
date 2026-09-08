@@ -1,0 +1,236 @@
+version: "3.9"
+
+# =========================================================
+# docker-compose.yml - plataforma_lc_digital_cn
+# Levanta: MySQL (una BD por microservicio) + Eureka + Admin
+# + API Gateway + 6 microservicios de negocio
+# =========================================================
+
+# =========================================================
+# docker-compose.yml - plataforma_lc_digital_cn
+# Levanta: MySQL (una BD por microservicio) + Eureka + Admin
+# + API Gateway + 6 microservicios de negocio
+# =========================================================
+
+# =========================================================
+# docker-compose.yml - plataforma_lc_digital_cn
+# Levanta: MySQL (una BD por microservicio) + Eureka + Admin
+# + API Gateway + 6 microservicios de negocio
+# =========================================================
+
+services:
+
+  # ---------------- BASE DE DATOS ----------------
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: estudiante
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - plataforma-net
+
+  # ---------------- SERVICE DISCOVERY ----------------
+  eureka-server:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_infra/eurekaServer/Dockerfile.eurekaServer
+    container_name: eureka-server
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    networks:
+      - plataforma-net
+
+  # ---------------- MONITOREO ----------------
+  admin-server:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_infra/adminSpringBoot/Dockerfile.adminSpringBoot
+    container_name: admin-server
+    restart: unless-stopped
+    ports:
+      - "8062:8062"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - plataforma-net
+
+  # ---------------- API GATEWAY ----------------
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_infra/apiGateway/Dockerfile.apiGateway
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - "8085:8085"
+    environment:
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      - eureka-server
+    networks:
+      - plataforma-net
+
+  # ---------------- MICROSERVICIOS DE NEGOCIO ----------------
+  estudiante:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_gestion/estudiante/Dockerfile.estudiante
+    container_name: estudiante
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/estudiante?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-net
+
+  curso:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_gestion/curso/Dockerfile.curso
+    container_name: curso
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/curso?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-net
+
+  asistencia:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_gestion/asistencia/Dockerfile.asistencia
+    container_name: asistencia
+    restart: unless-stopped
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/asistencia?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka/
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-net
+
+  evaluaciones:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_gestion/evaluaciones/Dockerfile.evaluaciones
+    container_name: evaluaciones
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/evaluaciones?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+      MS_CURSO_URL: http://curso:8081
+      MS_ESTUDIANTE_URL: http://estudiante:8080
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-net
+
+  justificativos:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_gestion/justificativos/Dockerfile.justificativos
+    container_name: justificativos
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/justificativos?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-net
+
+  anotaciones:
+    build:
+      context: .
+      dockerfile: ./plataforma_lc/sistema_gestion/anotaciones/Dockerfile.anotaciones
+    container_name: anotaciones
+    restart: unless-stopped
+    ports:
+      - "8087:8087"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/anotaciones?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      - plataforma-net
+
+  # ---------------- FRONTEND ----------------
+  frontend:
+    build:
+      context: ./frontend/plataforma_lc_frontend
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - plataforma-net
+
+networks:
+  plataforma-net:
+    driver: bridge
+
+volumes:
+  mysql_data:

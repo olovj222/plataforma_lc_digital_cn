@@ -57,7 +57,14 @@ function DetalleCursoPage() {
         <Button variant="outlined" onClick={() => navigate(`/profesor/mis-cursos/${id}/clase`)}>
           Ver Clases
         </Button>
+        <Button variant="outlined" onClick={() => navigate(`/profesor/mis-cursos/${id}/justificativos`)}>
+          Justificativos
+        </Button>
+        <Button variant="outlined" onClick={() => navigate(`/profesor/mis-cursos/${id}/anotaciones`)}>
+          Anotaciones
+        </Button>
       </Box>
+      
 
       <Typography variant="h6" sx={{ mb: 2 }}>Estudiantes</Typography>
       <TableContainer component={Paper}>
