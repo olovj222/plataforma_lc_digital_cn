@@ -4,18 +4,20 @@ import {
   CircularProgress
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { useMsal } from '@azure/msal-react'
 
 import { getCursosByProfesor } from '../../api/cursoApi'
 import type { Curso } from '../../types/Curso'
-import keycloak from '../../keycloak'
 
 function MisCursosPage() {
   const [cursos, setCursos] = useState<Curso[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
+  const { accounts } = useMsal()
+  const currentAccount = accounts[0]
 
-  const profesorId = keycloak.tokenParsed?.sub ?? ''
+  const profesorId = currentAccount?.idTokenClaims?.sub ?? ''
 
   useEffect(() => {
     const cargar = async () => {

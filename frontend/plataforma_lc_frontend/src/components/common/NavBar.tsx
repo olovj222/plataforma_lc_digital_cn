@@ -1,17 +1,18 @@
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import keycloak from '../../keycloak'
-import { useMsal } from '@azure/msal-react';
+import { useMsal } from '@azure/msal-react'
 
 function Navbar() {
   const navigate = useNavigate()
-  const roles = keycloak.tokenParsed?.realm_access?.roles ?? []
+  const { instance, accounts } = useMsal()
+  const currentAccount = accounts[0]
+  const roles = currentAccount?.idTokenClaims?.roles ?? []
   const isAdmin = roles.includes('Administrador')
   const isProfesor = roles.includes('PROFESOR')
-  const { instance } = useMsal();
+
   const handleLogout = () => {
-    instance.logoutRedirect();
-  };
+    instance.logoutRedirect()
+  }
 
   return (
     <AppBar position="static">

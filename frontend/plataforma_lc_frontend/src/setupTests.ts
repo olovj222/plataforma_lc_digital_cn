@@ -2,14 +2,19 @@ import '@testing-library/jest-dom';
 import { beforeAll, afterEach, afterAll, vi } from 'vitest'
 import { server } from './mocks/server'
 
-vi.mock('./src/keycloak', () => {
+vi.mock('./msalConfig', () => {
   return {
-    default: {
-      token: 'token-falso-para-que-axios-sea-feliz',
-      authenticated: true,
-      login: vi.fn(),
-      logout: vi.fn(),
-    }
+    msalInstance: {
+      getActiveAccount: vi.fn(() => ({
+        idTokenClaims: { sub: 'test-user-id', roles: ['ADMIN'] },
+      })),
+      getAllAccounts: vi.fn(() => [
+        { idTokenClaims: { sub: 'test-user-id', roles: ['ADMIN'] } },
+      ]),
+      acquireTokenSilent: vi.fn(() =>
+        Promise.resolve({ idToken: 'token-falso-para-que-axios-sea-feliz' })
+      ),
+    },
   }
 })
 

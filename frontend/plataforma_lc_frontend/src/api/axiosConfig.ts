@@ -1,19 +1,37 @@
 import axios, { InternalAxiosRequestConfig } from 'axios'
-import keycloak from '../keycloak'
+import { InteractionRequiredAuthError } from '@azure/msal-browser'
+import { msalInstance } from '../msalConfig'
 
 const BASE_URL = 'http://localhost:8085'
 
-// Interceptor asíncrono que auto-renueva el token antes de cada petición
+// Scopes mínimos solo para mantener la sesión renovable.
+// Si más adelante expones un scope propio de API en Entra ID, agrégalo aquí.
+const tokenRequest = {
+  scopes: ['openid', 'profile'],
+}
+
+// Interceptor asíncrono: obtiene el token vigente (o lo renueva) antes de cada petición
 const authInterceptor = async (config: InternalAxiosRequestConfig) => {
-  if (keycloak.authenticated) {
+  const account = msalInstance.getActiveAccount() ?? msalInstance.getAllAccounts()[0]
+
+  if (account) {
     try {
-      await keycloak.updateToken(30)
-      config.headers.Authorization = `Bearer ${keycloak.token}`
+      const response = await msalInstance.acquireTokenSilent({
+        ...tokenRequest,
+        account,
+      })
+      // Usamos el ID Token: es el mismo que ya usa App.tsx para leer los roles
+      config.headers.Authorization = `Bearer ${response.idToken}`
     } catch (error) {
-      console.error('Error al renovar el token de sesión:', error)
-      keycloak.login()
+      if (error instanceof InteractionRequiredAuthError) {
+        // La sesión requiere reautenticación interactiva (ej. token expirado del todo)
+        await msalInstance.acquireTokenRedirect(tokenRequest)
+      } else {
+        console.error('Error al renovar el token de sesión:', error)
+      }
     }
   }
+
   return config
 }
 
