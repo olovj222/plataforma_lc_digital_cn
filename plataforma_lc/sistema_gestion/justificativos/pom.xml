@@ -49,7 +49,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- Ajusta la ruta exacta según el package de tu clase con @SpringBootApplication -->
-                    <mainClass>com.plataforma_lc.justificativos.Justificativo</mainClass>
+                    <mainClass>com.plataforma_lc.justificativos.JustificativosApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
