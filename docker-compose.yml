@@ -2,41 +2,129 @@ version: "3.9"
 
 # =========================================================
 # docker-compose.yml - plataforma_lc_digital_cn
-# Levanta: MySQL (una BD por microservicio) + Eureka + Admin
-# + API Gateway + 6 microservicios de negocio
-# =========================================================
-
-# =========================================================
-# docker-compose.yml - plataforma_lc_digital_cn
-# Levanta: MySQL (una BD por microservicio) + Eureka + Admin
-# + API Gateway + 6 microservicios de negocio
-# =========================================================
-
-# =========================================================
-# docker-compose.yml - plataforma_lc_digital_cn
-# Levanta: MySQL (una BD por microservicio) + Eureka + Admin
-# + API Gateway + 6 microservicios de negocio
+# Levanta: 6 Bases de Datos MySQL + Eureka + Admin
+# + API Gateway + 6 Microservicios + Frontend
 # =========================================================
 
 services:
-  # ---------------- BASE DE DATOS ----------------
-  mysql-db:
+  # ---------------- BASES DE DATOS INDIVIDUALES ----------------
+  mysql-estudiante:
     image: mysql:8.0
-    container_name: mysql-db
+    container_name: mysql-estudiante
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: estudiante
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - mysql_estudiante_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 20s
+    networks:
+      - plataforma-net
+
+  mysql-curso:
+    image: mysql:8.0
+    container_name: mysql-curso
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: curso
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_curso_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - plataforma-net
+
+  mysql-asistencia:
+    image: mysql:8.0
+    container_name: mysql-asistencia
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: asistencia
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_asistencia_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - plataforma-net
+
+  mysql-evaluaciones:
+    image: mysql:8.0
+    container_name: mysql-evaluaciones
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: evaluaciones
+    ports:
+      - "3310:3306"
+    volumes:
+      - mysql_evaluaciones_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - plataforma-net
+
+  mysql-justificativos:
+    image: mysql:8.0
+    container_name: mysql-justificativos
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: justificativos
+    ports:
+      - "3311:3306"
+    volumes:
+      - mysql_justificativos_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks:
+      - plataforma-net
+
+  mysql-anotaciones:
+    image: mysql:8.0
+    container_name: mysql-anotaciones
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: anotaciones
+    ports:
+      - "3312:3306"
+    volumes:
+      - mysql_anotaciones_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     networks:
       - plataforma-net
 
@@ -81,6 +169,10 @@ services:
       - "8085:8085"
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://host.docker.internal:8090/realms/plataforma_lc/protocol/openid-connect/certs
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - eureka-server
     networks:
@@ -96,12 +188,12 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/estudiante?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-estudiante:3306/estudiante?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      mysql-db:
+      mysql-estudiante:
         condition: service_healthy
       eureka-server:
         condition: service_started
@@ -117,12 +209,12 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/curso?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-curso:3306/curso?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      mysql-db:
+      mysql-curso:
         condition: service_healthy
       eureka-server:
         condition: service_started
@@ -138,12 +230,13 @@ services:
     ports:
       - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/asistencia?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-asistencia:3306/asistencia?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      MS_CURSO_URL: http://curso:8081
     depends_on:
-      mysql-db:
+      mysql-asistencia:
         condition: service_healthy
       eureka-server:
         condition: service_started
@@ -159,14 +252,14 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/evaluaciones?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-evaluaciones:3306/evaluaciones?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       MS_CURSO_URL: http://curso:8081
       MS_ESTUDIANTE_URL: http://estudiante:8080
     depends_on:
-      mysql-db:
+      mysql-evaluaciones:
         condition: service_healthy
       eureka-server:
         condition: service_started
@@ -182,12 +275,12 @@ services:
     ports:
       - "8086:8086"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/justificativos?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-justificativos:3306/justificativos?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      mysql-db:
+      mysql-justificativos:
         condition: service_healthy
       eureka-server:
         condition: service_started
@@ -203,12 +296,12 @@ services:
     ports:
       - "8087:8087"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/anotaciones?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-anotaciones:3306/anotaciones?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     depends_on:
-      mysql-db:
+      mysql-anotaciones:
         condition: service_healthy
       eureka-server:
         condition: service_started
@@ -234,4 +327,9 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  mysql_estudiante_data:
+  mysql_curso_data:
+  mysql_asistencia_data:
+  mysql_evaluaciones_data:
+  mysql_justificativos_data:
+  mysql_anotaciones_data:

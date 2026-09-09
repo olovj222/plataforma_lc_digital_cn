@@ -22,8 +22,8 @@ public class JustificativoRestController {
 
     @PostMapping
     public ResponseEntity<Justificativo> crear(@Valid @RequestBody Justificativo input,
-                                                @RequestHeader("X-User-Id") String userId,
-                                                @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+                                                @RequestHeader(value = "X-User-Id", required = false) String userId,
+                                                @RequestHeader(value = "X-User-Roles", required = false) String roles) throws BusinessRuleException {
         requireRole(roles, "PROFESOR");
 
         input.setEstado(EstadoJustificativo.PENDIENTE);
@@ -33,37 +33,37 @@ public class JustificativoRestController {
     }
 
     @GetMapping("/estudiante/{estudianteId}")
-    public ResponseEntity<List<Justificativo>> porEstudiante(@PathVariable Long estudianteId,
-                                                               @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<List<Justificativo>> porEstudiante(@PathVariable("estudianteId") Long estudianteId,
+                                                               @RequestHeader(value = "X-User-Roles", required = false) String roles) throws BusinessRuleException {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByEstudianteId(estudianteId));
     }
 
     @GetMapping("/curso/{cursoId}")
-    public ResponseEntity<List<Justificativo>> porCurso(@PathVariable Long cursoId,
-                                                          @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<List<Justificativo>> porCurso(@PathVariable("cursoId") Long cursoId,
+                                                          @RequestHeader(value = "X-User-Roles", required = false) String roles) throws BusinessRuleException {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByCursoId(cursoId));
     }
 
     @GetMapping("/pendientes")
-    public ResponseEntity<List<Justificativo>> pendientes(@RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<List<Justificativo>> pendientes(@RequestHeader(value = "X-User-Roles", required = false) String roles) throws BusinessRuleException {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(repository.findByEstado(EstadoJustificativo.PENDIENTE));
     }
 
     @PutMapping("/{id}/aprobar")
-    public ResponseEntity<Justificativo> aprobar(@PathVariable Long id,
-                                                  @RequestHeader("X-User-Id") String userId,
-                                                  @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<Justificativo> aprobar(@PathVariable("id") Long id,
+                                                  @RequestHeader(value = "X-User-Id", required = false) String userId,
+                                                  @RequestHeader(value = "X-User-Roles", required = false) String roles) throws BusinessRuleException {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(resolver(id, EstadoJustificativo.APROBADO, userId));
     }
 
     @PutMapping("/{id}/rechazar")
-    public ResponseEntity<Justificativo> rechazar(@PathVariable Long id,
-                                                   @RequestHeader("X-User-Id") String userId,
-                                                   @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
+    public ResponseEntity<Justificativo> rechazar(@PathVariable("id") Long id,
+                                                   @RequestHeader(value = "X-User-Id", required = false) String userId,
+                                                   @RequestHeader(value = "X-User-Roles", required = false) String roles) throws BusinessRuleException {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(resolver(id, EstadoJustificativo.RECHAZADO, userId));
     }
@@ -71,30 +71,43 @@ public class JustificativoRestController {
     // --- helpers ---
 
     private Justificativo resolver(Long id, EstadoJustificativo estado, String resueltoPor) {
-    Justificativo j = repository.findById(id)
-        .orElseThrow(() -> new BusinessRuleException(
-            "Justificativo con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
-        ));
-    j.setEstado(estado);
-    j.setResueltoPor(resueltoPor);
-    j.setFechaResolucion(LocalDateTime.now());
-    return repository.save(j);
-}
+        Justificativo j = repository.findById(id)
+            .orElseThrow(() -> new BusinessRuleException(
+                "Justificativo con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
+            ));
+        j.setEstado(estado);
+        j.setResueltoPor(resueltoPor);
+        j.setFechaResolucion(LocalDateTime.now());
+        return repository.save(j);
+    }
 
     private void requireRole(String rolesHeader, String required) throws BusinessRuleException {
-        if (rolesHeader == null || !rolesHeader.contains(required)) {
+        if (rolesHeader == null) {
+            throw new BusinessRuleException("No tiene permisos para realizar esta acción", HttpStatus.FORBIDDEN.value());
+        }
+        String upperHeader = rolesHeader.toUpperCase();
+        String upperRequired = required.toUpperCase();
+
+        if (!upperHeader.contains(upperRequired) && !upperHeader.contains("ROLE_" + upperRequired)) {
             throw new BusinessRuleException(
                 "No tiene permisos para realizar esta acción", HttpStatus.FORBIDDEN.value()
             );
         }
     }
 
-    private void requireAnyRole(String rolesHeader, String... allowed) throws BusinessRuleException {
-        if (rolesHeader == null) {
-            throw new BusinessRuleException("No tiene permisos para realizar esta acción", HttpStatus.FORBIDDEN.value());
-        }
+    private void requireAnyRole(String rolesHeader, String... allowed) {
+    System.out.println(">>> ROLES HEADER RECIBIDO: [" + rolesHeader + "]"); // Log diagnóstico
+    
+    if (rolesHeader == null) {
+        throw new BusinessRuleException("No tiene permisos para realizar esta acción", HttpStatus.FORBIDDEN.value());
+    }
+        String upperHeader = rolesHeader.toUpperCase();
+
         for (String role : allowed) {
-            if (rolesHeader.contains(role)) return;
+            String upperRole = role.toUpperCase();
+            if (upperHeader.contains(upperRole) || upperHeader.contains("ROLE_" + upperRole)) {
+                return;
+            }
         }
         throw new BusinessRuleException("No tiene permisos para realizar esta acción", HttpStatus.FORBIDDEN.value());
     }
