@@ -1,6 +1,11 @@
 import { anotacionesApi } from './axiosConfig'
 import type { Anotacion, TipoAnotacion } from '../types/Anotacion'
 
+export const getTodasLasAnotaciones = async (): Promise<Anotacion[]> => {
+  const res = await anotacionesApi.get('/anotaciones')
+  return res.data
+}
+
 export const getAnotacionesByCurso = async (cursoId: number): Promise<Anotacion[]> => {
   const res = await anotacionesApi.get(`/anotaciones/curso/${cursoId}`)
   return res.data

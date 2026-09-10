@@ -7,13 +7,14 @@ function Navbar() {
   const { instance, accounts } = useMsal()
   const currentAccount = accounts[0]
   const roles = currentAccount?.idTokenClaims?.roles ?? []
-  const isAdmin = roles.includes('Administrador')
+  const isAdmin = roles.includes('ADMIN')
   const isProfesor = roles.includes('PROFESOR')
 
   const handleLogout = () => {
     instance.logoutRedirect()
   }
-
+console.log('roles:', roles)
+console.log('sub:', currentAccount?.idTokenClaims?.sub)
   return (
     <AppBar position="static">
       <Toolbar>

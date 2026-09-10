@@ -22,37 +22,37 @@ function App() {
   const { accounts } = useMsal();
   const currentAccount = accounts[0]; 
   const roles = currentAccount?.idTokenClaims?.roles ?? [];
-  const isAdmin = roles.includes('Task.write');// Esto lo tengo asi porque me confundi creando los roles 
-  const isProfesor = roles.includes('sdadsadsa');
+  const isAdmin = roles.includes('ADMIN');// Esto lo tengo asi porque me confundi creando los roles 
+  const isProfesor = roles.includes('PROFESOR');
 
   const { instance } = useMsal(); 
     // 2. Un hook útil para saber rápidamente si hay alguien logueado
     const isAuthenticated = useIsAuthenticated(); 
 
-    useEffect(() => {
-        let timeoutId: ReturnType<typeof setTimeout>;
+    // useEffect(() => {
+    //     let timeoutId: ReturnType<typeof setTimeout>;
 
-        // 3. Si el usuario inicia sesión correctamente, arranca el reloj
-        if (isAuthenticated) {
-            const tiempoDeExpiracion = 10 * 1000; // 10 segundos de prueba
+    //     // 3. Si el usuario inicia sesión correctamente, arranca el reloj
+    //     if (isAuthenticated) {
+    //         const tiempoDeExpiracion = 10 * 1000; // 10 segundos de prueba
 
-            timeoutId = setTimeout(() => {
-                console.log("Simulando token expirado. Expulsando...");
-                // 4. Ejecuta el cierre de sesión propio de MSAL
-                instance.logoutRedirect({
-                    postLogoutRedirectUri: "/" // Asegura a dónde vuelve al salir
-                }); 
-                // Nota: usa logoutPopup() si tu inicio de sesión fue con ventana emergente
-            }, tiempoDeExpiracion);
-        }
+    //         timeoutId = setTimeout(() => {
+    //             console.log("Simulando token expirado. Expulsando...");
+    //             // 4. Ejecuta el cierre de sesión propio de MSAL
+    //             instance.logoutRedirect({
+    //                 postLogoutRedirectUri: "/" // Asegura a dónde vuelve al salir
+    //             }); 
+    //             // Nota: usa logoutPopup() si tu inicio de sesión fue con ventana emergente
+    //         }, tiempoDeExpiracion);
+    //     }
 
-        // Limpiamos el temporizador al desmontar para evitar fugas de memoria
-        return () => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
-    }, [isAuthenticated, instance]);
+    //     // Limpiamos el temporizador al desmontar para evitar fugas de memoria
+    //     return () => {
+    //         if (timeoutId) {
+    //             clearTimeout(timeoutId);
+    //         }
+    //     };
+    // }, [isAuthenticated, instance]);
 
   return (
     <MsalAuthenticationTemplate 

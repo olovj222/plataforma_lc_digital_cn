@@ -1,58 +1,52 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, Chip, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
-import { getJustificativosPendientes, aprobarJustificativo, rechazarJustificativo } from '../../api/justificativosApi'
-import type { Justificativo } from '../../types/Justificativo'
+import { Box, Chip, IconButton, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { getTodasLasAnotaciones, eliminarAnotacion } from '../../api/anotacionesApi'
+import type { Anotacion } from '../../types/Anotacion'
 
-function JustificativosPage() {
-  const [pendientes, setPendientes] = useState<Justificativo[]>([])
+function AnotacionesAdminPage() {
+  const [anotaciones, setAnotaciones] = useState<Anotacion[]>([])
 
   const cargar = async () => {
-    const data = await getJustificativosPendientes()
-    setPendientes(data)
+    const data = await getTodasLasAnotaciones()
+    setAnotaciones(data)
   }
 
   useEffect(() => { cargar() }, [])
 
-  const aprobar = async (id?: number) => {
+  const eliminar = async (id?: number) => {
     if (!id) return
-    await aprobarJustificativo(id)
-    cargar()
-  }
-
-  const rechazar = async (id?: number) => {
-    if (!id) return
-    await rechazarJustificativo(id)
+    await eliminarAnotacion(id)
     cargar()
   }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <Typography variant="h5">Justificativos Pendientes</Typography>
+      <Typography variant="h5">Todas las Anotaciones (Administrador)</Typography>
 
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Estudiante</TableCell>
-            <TableCell>Curso</TableCell>
+            <TableCell>Estudiante ID</TableCell>
+            <TableCell>Tipo</TableCell>
+            <TableCell>Descripción</TableCell>
             <TableCell>Fecha</TableCell>
-            <TableCell>Motivo</TableCell>
             <TableCell>Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {pendientes.map(j => (
-            <TableRow key={j.id}>
-              <TableCell>{j.estudianteId}</TableCell>
-              <TableCell>{j.cursoId}</TableCell>
-              <TableCell>{j.fechaInasistencia}</TableCell>
-              <TableCell>{j.motivo}</TableCell>
-              <TableCell sx={{ display: 'flex', gap: 1 }}>
-                <Button size="small" variant="contained" color="success" onClick={() => aprobar(j.id)}>
-                  Aprobar
-                </Button>
-                <Button size="small" variant="outlined" color="error" onClick={() => rechazar(j.id)}>
-                  Rechazar
-                </Button>
+          {anotaciones.map(a => (
+            <TableRow key={a.id}>
+              <TableCell>{a.estudianteId}</TableCell>
+              <TableCell>
+                <Chip label={a.tipo} color={a.tipo === 'POSITIVA' ? 'success' : 'error'} size="small" />
+              </TableCell>
+              <TableCell>{a.descripcion}</TableCell>
+              <TableCell>{a.fecha}</TableCell>
+              <TableCell>
+                <IconButton onClick={() => eliminar(a.id)}>
+                  <DeleteIcon color="error" />
+                </IconButton>
               </TableCell>
             </TableRow>
           ))}
@@ -62,4 +56,4 @@ function JustificativosPage() {
   )
 }
 
-export default JustificativosPage
+export default AnotacionesAdminPage

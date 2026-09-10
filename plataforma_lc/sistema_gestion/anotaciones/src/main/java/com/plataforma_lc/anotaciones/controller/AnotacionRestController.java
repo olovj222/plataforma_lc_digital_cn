@@ -19,6 +19,12 @@ public class AnotacionRestController {
     @Autowired
     AnotacionRepository repository;
 
+    @GetMapping
+    public ResponseEntity<List<Anotacion>> obtenerTodas(@RequestHeader("X-User-Roles") String roles) {
+        requireRole(roles, "ADMIN"); // O usa requireAnyRole(roles, "ADMIN", "PROFESOR") si los profesores también pueden ver la lista completa
+        return ResponseEntity.ok(repository.findAll());
+    }
+    
     @PostMapping
     public ResponseEntity<Anotacion> crear(@Valid @RequestBody Anotacion input,
                                             @RequestHeader("X-User-Id") String userId,
