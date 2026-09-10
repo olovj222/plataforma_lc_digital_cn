@@ -3,7 +3,7 @@ version: "3.9"
 # =========================================================
 # docker-compose.yml - plataforma_lc_digital_cn
 # Levanta: 6 Bases de Datos MySQL + Eureka + Admin
-# + API Gateway + 6 Microservicios + Frontend
+# + API Gateway + 6 Microservicios
 # =========================================================
 
 services:
@@ -137,6 +137,8 @@ services:
     restart: unless-stopped
     ports:
       - "8761:8761"
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
     networks:
       - plataforma-net
 
@@ -150,6 +152,7 @@ services:
     ports:
       - "8062:8062"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "*"
@@ -168,6 +171,7 @@ services:
     ports:
       - "8085:8085"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://login.microsoftonline.com/2dcf78c8-4359-4115-8b06-50c5a455e4e0/v2.0
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
@@ -188,6 +192,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-estudiante:3306/estudiante?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -209,6 +214,7 @@ services:
     ports:
       - "8081:8081"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-curso:3306/curso?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -230,6 +236,7 @@ services:
     ports:
       - "8082:8082"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-asistencia:3306/asistencia?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -253,6 +260,7 @@ services:
     ports:
       - "8083:8083"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-evaluaciones:3306/evaluaciones?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -276,6 +284,7 @@ services:
     ports:
       - "8086:8086"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-justificativos:3306/justificativos?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -297,6 +306,7 @@ services:
     ports:
       - "8087:8087"
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-anotaciones:3306/anotaciones?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
@@ -310,18 +320,18 @@ services:
       - plataforma-net
 
   # ---------------- FRONTEND ----------------
-  frontend:
-    build:
-      context: ./frontend/plataforma_lc_frontend
-      dockerfile: Dockerfile.frontend
-    container_name: frontend
-    restart: unless-stopped
-    ports:
-      - "5173:80"
-    depends_on:
-      - api-gateway
-    networks:
-      - plataforma-net
+  # frontend:
+  #   build:
+  #     context: ./frontend/plataforma_lc_frontend
+  #     dockerfile: Dockerfile.frontend
+  #   container_name: frontend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "5173:80"
+  #   depends_on:
+  #     - api-gateway
+  #   networks:
+  #     - plataforma-net
 
 networks:
   plataforma-net:
