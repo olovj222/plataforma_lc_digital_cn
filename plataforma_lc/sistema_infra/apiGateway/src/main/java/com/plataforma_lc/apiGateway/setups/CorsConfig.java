@@ -16,7 +16,9 @@ public class CorsConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
+        // Solo permite entorno local y cualquier túnel generado por Cloudflare
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOriginPattern("https://*.trycloudflare.com");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
