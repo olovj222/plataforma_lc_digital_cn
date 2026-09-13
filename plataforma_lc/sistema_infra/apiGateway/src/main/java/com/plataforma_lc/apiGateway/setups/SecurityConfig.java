@@ -18,18 +18,17 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
-                config.addAllowedOrigin("http://localhost:5173");
+                // Permite cualquier origen (incluyendo Cloudflare y localhost) soportando credenciales
+                config.addAllowedOriginPattern("*");
                 config.addAllowedMethod("*");
                 config.addAllowedHeader("*");
                 config.setAllowCredentials(true);
                 return config;
             }))
-            .authorizeExchange(exchanges -> exchanges
-                .anyExchange().permitAll()
-//                    auth -> auth
-//                .pathMatchers("/actuator/**").permitAll()
-//                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                .anyExchange().authenticated()
+            .authorizeExchange(auth -> auth
+                .pathMatchers("/actuator/**").permitAll()
+                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> {})
