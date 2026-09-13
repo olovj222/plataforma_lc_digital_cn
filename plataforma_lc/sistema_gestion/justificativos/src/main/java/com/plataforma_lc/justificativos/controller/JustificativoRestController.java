@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/justificativos")
@@ -21,6 +22,7 @@ public class JustificativoRestController {
     JustificativoRepository repository;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Justificativo> crear(@Valid @RequestBody Justificativo input,
                                                 @RequestHeader("X-User-Id") String userId,
                                                 @RequestHeader("X-User-Roles") String roles) throws BusinessRuleException {
@@ -51,6 +53,7 @@ public class JustificativoRestController {
         return ResponseEntity.ok(repository.findByEstado(EstadoJustificativo.PENDIENTE));
     }
     @PutMapping("/{id}/aprobar")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.no')")
     public ResponseEntity<Justificativo> aprobar(@PathVariable("id") Long id,
                                                   @RequestHeader("X-User-Id") String userId,
                                                   @RequestHeader("X-User-Roles") String roles) {
@@ -59,6 +62,7 @@ public class JustificativoRestController {
     }
 
     @PutMapping("/{id}/rechazar")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Justificativo> rechazar(@PathVariable("id") Long id,
                                                    @RequestHeader("X-User-Id") String userId,
                                                    @RequestHeader("X-User-Roles") String roles) {

@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ public class ClaseRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> post(@RequestBody Clase input) {
         if (input.getCursoId() == null || input.getCursoId() == 0) {
             return ResponseEntity.badRequest()
@@ -71,6 +73,7 @@ public class ClaseRestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> put(@PathVariable("id") Long id, @RequestBody Clase input) {
         Optional<Clase> opt = claseRepository.findById(id);
         if (opt.isPresent()) {
@@ -84,6 +87,7 @@ public class ClaseRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         claseRepository.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);

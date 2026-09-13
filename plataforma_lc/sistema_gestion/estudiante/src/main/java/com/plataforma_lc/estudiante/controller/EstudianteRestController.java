@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,6 +77,7 @@ public class EstudianteRestController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Estudiante> put(@PathVariable("id") Long id, @RequestBody Estudiante input) throws BusinessRuleException {
         Estudiante estudiante = estudianteRepository.findById(id)
                 .orElseThrow(() -> new BusinessRuleException(
@@ -100,6 +102,7 @@ public class EstudianteRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Estudiante> post(@Valid @RequestBody Estudiante input) throws BusinessRuleException {
         if (input.getCursos() == null || input.getCursos().isEmpty()) {
             throw new BusinessRuleException(
@@ -129,6 +132,7 @@ public class EstudianteRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) throws BusinessRuleException {
         estudianteRepository.findById(id)
                 .orElseThrow(() -> new BusinessRuleException(

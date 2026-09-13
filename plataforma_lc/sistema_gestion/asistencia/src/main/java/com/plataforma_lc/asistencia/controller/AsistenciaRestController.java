@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +44,7 @@ public class AsistenciaRestController {
     private ClaseRepository claseRepository; 
     
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> post(@RequestBody Asistencia input) {
 
         // 1. Validar que la clase existe ← NUEVO
@@ -95,6 +97,7 @@ public class AsistenciaRestController {
     }
     
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> put(@PathVariable("id") Long id, @RequestBody Asistencia input) {
         Optional<Asistencia> optionalAsistencia = asistenciaRepository.findById(id);
         if (optionalAsistencia.isPresent()) {
@@ -112,6 +115,7 @@ public class AsistenciaRestController {
     }
     
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         asistenciaRepository.deleteById(id);
         return ResponseEntity.ok(HttpStatus.OK);

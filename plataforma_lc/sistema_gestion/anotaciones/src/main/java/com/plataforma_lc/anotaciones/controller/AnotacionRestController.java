@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/anotaciones")
@@ -26,6 +27,7 @@ public class AnotacionRestController {
     }
     
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Anotacion> crear(@Valid @RequestBody Anotacion input,
                                             @RequestHeader("X-User-Id") String userId,
                                             @RequestHeader("X-User-Roles") String roles) {
@@ -59,6 +61,7 @@ public class AnotacionRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Void> eliminar(@PathVariable("id") Long id,
                                           @RequestHeader("X-User-Roles") String roles) {
         requireRole(roles, "ADMIN");

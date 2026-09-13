@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 /**
  *
  * @author juako
@@ -27,11 +28,13 @@ public class evaluacionesController {
     private evaluacionesService service;
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> crear(@Valid @RequestBody Evaluaciones e) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.guardar(e));
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> actualizar(@PathVariable Long id, @Valid @RequestBody Evaluaciones e) {
         return ResponseEntity.ok(service.actualizar(id, e));
     }
@@ -42,6 +45,7 @@ public class evaluacionesController {
     }
 
     @PostMapping("/{id}/nota")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<?> ponerNota(@PathVariable Long id, @RequestParam int nota) {
         return ResponseEntity.ok(service.registrarNota(id, nota));
     }
@@ -52,6 +56,7 @@ public class evaluacionesController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.no')")
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.ok("Evaluación eliminada correctamente");

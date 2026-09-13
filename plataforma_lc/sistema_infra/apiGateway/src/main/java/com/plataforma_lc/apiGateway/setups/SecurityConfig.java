@@ -25,10 +25,8 @@ public class SecurityConfig {
                 config.setAllowCredentials(true);
                 return config;
             }))
-            .authorizeExchange(auth -> auth
-                .pathMatchers("/actuator/**").permitAll()
-                .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .anyExchange().authenticated()
+            .authorizeExchange(exchanges -> exchanges
+                .anyExchange().permitAll()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> {})

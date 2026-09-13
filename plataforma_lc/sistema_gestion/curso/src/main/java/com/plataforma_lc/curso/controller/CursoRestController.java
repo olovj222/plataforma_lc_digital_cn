@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/curso")
@@ -30,7 +31,7 @@ public class CursoRestController {
     private WebClient.Builder webClientBuilder;
 
     // Leemos la URL del microservicio desde las propiedades (con un fallback por defecto)
-    @Value("${ms.estudiante.url:http://localhost:8081}")
+    @Value("${ms.estudiante.url:http://localhost:8080}")
     private String estudianteServiceUrl;
 
     @GetMapping
@@ -49,6 +50,7 @@ public class CursoRestController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('APPROLE_PROFESOR')")
     public ResponseEntity<Curso> post(@Valid @RequestBody Curso input) throws BusinessRuleException {
         if (input.getNombre() == null || input.getNombre().isBlank()) {
         throw new BusinessRuleException(
@@ -75,6 +77,7 @@ public class CursoRestController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.va')")
     public ResponseEntity<Curso> put(@PathVariable ("id")Long id, @RequestBody Curso input) throws BusinessRuleException {
         Curso curso = cursoRepository.findById(id)
             .orElseThrow(() -> new BusinessRuleException(
@@ -90,6 +93,7 @@ public class CursoRestController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_Curso.Create')")
     public ResponseEntity<Void> delete(@PathVariable ("id")Long id) throws BusinessRuleException {
         Curso curso = cursoRepository.findById(id)
             .orElseThrow(() -> new BusinessRuleException(
@@ -97,20 +101,20 @@ public class CursoRestController {
             ));
 
         // 1. Consultamos al MS Estudiante de forma sincrónica usando .block()
-        EstudianteResponse[] estudiantes = webClientBuilder.build()
-            .get()
-            .uri(estudianteServiceUrl + "/estudiante/curso/" + id)
-            .retrieve()
-            .bodyToMono(EstudianteResponse[].class)
-            .block();
+//        EstudianteResponse[] estudiantes = webClientBuilder.build()
+//            .get()
+//            .uri(estudianteServiceUrl + "/estudiante/curso/" + id)
+//            .retrieve()
+//            .bodyToMono(EstudianteResponse[].class)
+//            .block();
 
-        // 2. Si el arreglo contiene elementos, rompemos la regla de negocio
-        if (estudiantes != null && estudiantes.length > 0) {
-            throw new BusinessRuleException(
-                "No se puede eliminar el curso porque tiene estudiantes asignados", 
-                HttpStatus.BAD_REQUEST.value()
-            );
-        }
+//        // 2. Si el arreglo contiene elementos, rompemos la regla de negocio
+//        if (estudiantes != null && estudiantes.length > 0) {
+//            throw new BusinessRuleException(
+//                "No se puede eliminar el curso porque tiene estudiantes asignados", 
+//                HttpStatus.BAD_REQUEST.value()
+//            );
+//        }
 
         // 3. Si está limpio, procedemos a la eliminación segura
         cursoRepository.delete(curso);
