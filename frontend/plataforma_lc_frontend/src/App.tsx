@@ -29,30 +29,41 @@ function App() {
     // 2. Un hook útil para saber rápidamente si hay alguien logueado
     const isAuthenticated = useIsAuthenticated(); 
 
-    // useEffect(() => {
-    //     let timeoutId: ReturnType<typeof setTimeout>;
+    useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
 
-    //     // 3. Si el usuario inicia sesión correctamente, arranca el reloj
-    //     if (isAuthenticated) {
-    //         const tiempoDeExpiracion = 10 * 1000; // 10 segundos de prueba
+    if (isAuthenticated) {
+        // 1. Obtener la cuenta activa de MSAL (o la primera si no hay una seteada como activa)
+        const account = instance.getActiveAccount() || instance.getAllAccounts()[0];
 
-    //         timeoutId = setTimeout(() => {
-    //             console.log("Simulando token expirado. Expulsando...");
-    //             // 4. Ejecuta el cierre de sesión propio de MSAL
-    //             instance.logoutRedirect({
-    //                 postLogoutRedirectUri: "/" // Asegura a dónde vuelve al salir
-    //             }); 
-    //             // Nota: usa logoutPopup() si tu inicio de sesión fue con ventana emergente
-    //         }, tiempoDeExpiracion);
-    //     }
+        // 2. Extraer los roles desde los claims del token
+        // Nota: Asegúrate de que Azure AD esté configurado para incluir "roles" en el token
+        const userRoles = (account?.idTokenClaims?.roles as string[]) || [];
 
-    //     // Limpiamos el temporizador al desmontar para evitar fugas de memoria
-    //     return () => {
-    //         if (timeoutId) {
-    //             clearTimeout(timeoutId);
-    //         }
-    //     };
-    // }, [isAuthenticated, instance]);
+        // 3. Validar si el usuario tiene el rol que deseas expulsar
+        // Cambia "Invitado" por el nombre exacto de tu rol en Azure
+        const debeSerExpulsado = userRoles.includes("Invitado");
+
+        if (debeSerExpulsado) {
+            const tiempoDeExpiracion = 10 * 1000; // 10 segundos
+
+            timeoutId = setTimeout(() => {
+                console.log("Rol no permitido detectado. Expulsando en 10 seg...");
+                
+                instance.logoutRedirect({
+                    postLogoutRedirectUri: "/"
+                }); 
+            }, tiempoDeExpiracion);
+        }
+    }
+
+    // Limpiamos el temporizador al desmontar
+    return () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    };
+}, [isAuthenticated, instance]);
 
   return (
     <MsalAuthenticationTemplate 
