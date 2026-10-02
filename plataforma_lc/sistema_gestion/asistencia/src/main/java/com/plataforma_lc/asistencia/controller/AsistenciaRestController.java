@@ -42,6 +42,15 @@ public class AsistenciaRestController {
     @Autowired
     private ClaseRepository claseRepository; 
     
+    @Autowired
+    private org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
+
+    @org.springframework.beans.factory.annotation.Value("${rabbitmq.exchange.asistencia}")
+    private String exchange;
+
+    @org.springframework.beans.factory.annotation.Value("${rabbitmq.routingkey.asistencia}")
+    private String routingKey;
+
     @PostMapping
     public ResponseEntity<?> post(@RequestBody Asistencia input) {
 
@@ -91,7 +100,12 @@ public class AsistenciaRestController {
                 .body("Error: El microservicio de estudiantes no está disponible.");
         }
 
-        return ResponseEntity.ok(asistenciaRepository.save(input));
+        Asistencia guardado = asistenciaRepository.save(input);
+        
+        // Emisión del evento asíncrono
+        rabbitTemplate.convertAndSend(exchange, routingKey, guardado);
+
+        return ResponseEntity.ok(guardado);
     }
     
     @PutMapping("/{id}")
