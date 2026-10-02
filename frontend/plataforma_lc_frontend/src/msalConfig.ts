@@ -12,4 +12,11 @@ export const msalConfig = {
     }
 };
 
+export const loginRequest = {
+    scopes: [
+        "User.Read",
+        "api://70af68d7-f0b7-4897-9d64-4a0b0791ca70/Curso.Create"
+    ]
+};
+
 export const msalInstance = new PublicClientApplication(msalConfig); 
