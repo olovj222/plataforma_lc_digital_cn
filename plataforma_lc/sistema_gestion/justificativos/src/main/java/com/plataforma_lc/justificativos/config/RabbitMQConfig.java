@@ -2,6 +2,7 @@ package com.plataforma_lc.justificativos.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,14 +54,18 @@ public class RabbitMQConfig {
         return new TopicExchange(dlxName);
     }
 
-    // 4. Bindings
+    // 4. Bindings con @Qualifier explícitos
     @Bean
-    public Binding asistenciaBinding(Queue asistenciaQueue, TopicExchange asistenciaExchange) {
+    public Binding asistenciaBinding(
+            @Qualifier("asistenciaQueue") Queue asistenciaQueue, 
+            @Qualifier("asistenciaExchange") TopicExchange asistenciaExchange) {
         return BindingBuilder.bind(asistenciaQueue).to(asistenciaExchange).with(routingKey);
     }
 
     @Bean
-    public Binding dlqBinding(Queue asistenciaDlq, TopicExchange deadLetterExchange) {
+    public Binding dlqBinding(
+            @Qualifier("asistenciaDlq") Queue asistenciaDlq, 
+            @Qualifier("deadLetterExchange") TopicExchange deadLetterExchange) {
         return BindingBuilder.bind(asistenciaDlq).to(deadLetterExchange).with(dlqRoutingKey);
     }
 
