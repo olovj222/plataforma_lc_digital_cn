@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication 
 @Entity
 @Table(name = "justificativos")
 public class Justificativo {
