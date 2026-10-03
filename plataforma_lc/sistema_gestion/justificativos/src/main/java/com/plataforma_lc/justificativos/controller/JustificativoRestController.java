@@ -3,6 +3,7 @@ package com.plataforma_lc.justificativos.controller;
 import com.plataforma_lc.justificativos.entities.Justificativo;
 import com.plataforma_lc.justificativos.entities.EstadoJustificativo;
 import com.plataforma_lc.justificativos.repository.JustificativoRepository;
+import com.plataforma_lc.justificativos.publisher.JustificativoPublisher;
 import com.plataforma_lc.justificativos.exception.BusinessRuleException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,10 @@ import java.util.List;
 public class JustificativoRestController {
 
     @Autowired
-    JustificativoRepository repository;
+    private JustificativoRepository repository;
+
+    @Autowired
+    private JustificativoPublisher justificativoPublisher;
 
     @PostMapping
     public ResponseEntity<Justificativo> crear(@Valid @RequestBody Justificativo input,
@@ -29,6 +33,10 @@ public class JustificativoRestController {
         input.setEstado(EstadoJustificativo.PENDIENTE);
         input.setAutorId(userId);
         Justificativo guardado = repository.save(input);
+
+        // Notificar creación del justificativo a RabbitMQ mediante el publisher
+        justificativoPublisher.publicarEventoJustificativo(guardado);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
@@ -45,11 +53,13 @@ public class JustificativoRestController {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByCursoId(cursoId));
     }
+
     @GetMapping("/pendientes")
     public ResponseEntity<List<Justificativo>> pendientes(@RequestHeader("X-User-Roles") String roles) {
         requireRole(roles, "ADMIN");
         return ResponseEntity.ok(repository.findByEstado(EstadoJustificativo.PENDIENTE));
     }
+
     @PutMapping("/{id}/aprobar")
     public ResponseEntity<Justificativo> aprobar(@PathVariable("id") Long id,
                                                   @RequestHeader("X-User-Id") String userId,
@@ -69,15 +79,20 @@ public class JustificativoRestController {
     // --- helpers ---
 
     private Justificativo resolver(Long id, EstadoJustificativo estado, String resueltoPor) {
-    Justificativo j = repository.findById(id)
-        .orElseThrow(() -> new BusinessRuleException(
-            "Justificativo con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
-        ));
-    j.setEstado(estado);
-    j.setResueltoPor(resueltoPor);
-    j.setFechaResolucion(LocalDateTime.now());
-    return repository.save(j);
-}
+        Justificativo j = repository.findById(id)
+            .orElseThrow(() -> new BusinessRuleException(
+                "Justificativo con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
+            ));
+        j.setEstado(estado);
+        j.setResueltoPor(resueltoPor);
+        j.setFechaResolucion(LocalDateTime.now());
+        Justificativo resuelto = repository.save(j);
+
+        // Publicar evento de resolución (Aprobar/Rechazar) mediante el publisher
+        justificativoPublisher.publicarEventoJustificativo(resuelto);
+
+        return resuelto;
+    }
 
     private void requireRole(String rolesHeader, String required) throws BusinessRuleException {
         if (rolesHeader == null || !rolesHeader.contains(required)) {
