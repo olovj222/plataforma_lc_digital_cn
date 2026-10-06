@@ -4,6 +4,7 @@ version: "3.9"
 # docker-compose.yml - plataforma_lc_digital_cn
 # Levanta: 6 Bases de Datos MySQL + Eureka + Admin
 # + API Gateway + 6 Microservicios
+# + RabbitMQ Cluster (2 nodos con failover)
 # =========================================================
 
 services:
@@ -142,22 +143,46 @@ services:
     networks:
       - plataforma-net
 
-  # ---------------- MONITOREO Y MENSAJERIA ----------------
-  rabbitmq:
-    image: rabbitmq:4-management
-    container_name: rabbitmq
+  # ---------------- MENSAJERIA: RABBITMQ CLUSTER (2 nodos) ----------------
+  rabbitmq-1:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq-1
+    hostname: rabbitmq-1
     restart: unless-stopped
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672"   # AMQP (nodo primario, mismos puertos que antes)
+      - "15672:15672" # Management UI nodo 1
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin123
+      RABBITMQ_ERLANG_COOKIE: "plataforma_lc_secret_cookie"
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - rabbitmq_data_1:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
     networks:
       - plataforma-net
 
+  rabbitmq-2:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq-2
+    hostname: rabbitmq-2
+    restart: unless-stopped
+    ports:
+      - "5673:5672"   # AMQP (nodo secundario, puerto distinto en host)
+      - "15673:15672" # Management UI nodo 2
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+      RABBITMQ_ERLANG_COOKIE: "plataforma_lc_secret_cookie"
+    volumes:
+      - rabbitmq_data_2:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    depends_on:
+      - rabbitmq-1
+    networks:
+      - plataforma-net
+
+  # ---------------- MONITOREO ----------------
   admin-server:
     build:
       context: .
@@ -212,8 +237,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
@@ -221,7 +245,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -240,8 +264,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
@@ -249,7 +272,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -270,8 +293,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       MS_CURSO_URL: http://curso:8081
       MS_ESTUDIANTE_URL: http://estudiante:8080
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
@@ -279,7 +301,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -300,8 +322,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       MS_CURSO_URL: http://curso:8081
       MS_ESTUDIANTE_URL: http://estudiante:8080
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
@@ -309,7 +330,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -328,8 +349,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
@@ -337,7 +357,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -356,8 +376,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
@@ -365,7 +384,7 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -381,14 +400,13 @@ services:
     environment:
       JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
     depends_on:
       eureka-server:
         condition: service_started
-      rabbitmq:
+      rabbitmq-1:
         condition: service_started
     networks:
       - plataforma-net
@@ -418,4 +436,5 @@ volumes:
   mysql_evaluaciones_data:
   mysql_justificativos_data:
   mysql_anotaciones_data:
-  rabbitmq_data:
+  rabbitmq_data_1:
+  rabbitmq_data_2:

@@ -9,6 +9,7 @@ import com.plataforma_lc.evaluaciones.entities.CursoResponse;
 import com.plataforma_lc.evaluaciones.entities.EstudianteResponse;
 import com.plataforma_lc.evaluaciones.entities.Evaluaciones;
 import com.plataforma_lc.evaluaciones.exception.BusinessRuleException;
+import com.plataforma_lc.evaluaciones.publisher.EvaluacionPublisher;
 import com.plataforma_lc.evaluaciones.repository.evaluacionesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,9 @@ public class evaluacionesService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private EvaluacionPublisher evaluacionPublisher;
 
     private void rellenarNombreCurso(Evaluaciones e) {
     try {
@@ -68,6 +72,8 @@ private void rellenarNombreEstudiante(Evaluaciones e) {
         Evaluaciones guardada = repo.save(e);
         rellenarNombreCurso(guardada);
         rellenarNombreEstudiante(guardada);
+        // Publicar evento a RabbitMQ: evaluaciones.queue
+        evaluacionPublisher.publicarEventoEvaluacion(guardada);
         return guardada;
     }
 
@@ -83,6 +89,8 @@ private void rellenarNombreEstudiante(Evaluaciones e) {
         Evaluaciones guardada = repo.save(e);
         rellenarNombreCurso(guardada);
         rellenarNombreEstudiante(guardada);
+        // Publicar evento a RabbitMQ: evaluaciones.queue
+        evaluacionPublisher.publicarEventoEvaluacion(guardada);
         return guardada;
     }
 
@@ -109,6 +117,8 @@ private void rellenarNombreEstudiante(Evaluaciones e) {
         Evaluaciones guardada = repo.save(e);
         rellenarNombreCurso(guardada);
         rellenarNombreEstudiante(guardada);
+        // Publicar evento a RabbitMQ: evaluaciones.queue
+        evaluacionPublisher.publicarEventoEvaluacion(guardada);
         return guardada;
     }
 

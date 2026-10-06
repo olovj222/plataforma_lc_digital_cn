@@ -2,6 +2,7 @@ package com.plataforma_lc.anotaciones.controller;
 
 import com.plataforma_lc.anotaciones.entities.Anotacion;
 import com.plataforma_lc.anotaciones.entities.TipoAnotacion;
+import com.plataforma_lc.anotaciones.publisher.AnotacionPublisher;
 import com.plataforma_lc.anotaciones.repository.AnotacionRepository;
 import com.plataforma_lc.anotaciones.exception.BusinessRuleException;
 import jakarta.validation.Valid;
@@ -19,6 +20,9 @@ public class AnotacionRestController {
     @Autowired
     AnotacionRepository repository;
 
+    @Autowired
+    AnotacionPublisher anotacionPublisher;
+
     @GetMapping
     public ResponseEntity<List<Anotacion>> obtenerTodas(@RequestHeader("X-User-Roles") String roles) {
         requireRole(roles, "ADMIN"); // O usa requireAnyRole(roles, "ADMIN", "PROFESOR") si los profesores también pueden ver la lista completa
@@ -33,6 +37,10 @@ public class AnotacionRestController {
 
         input.setAutorId(userId);
         Anotacion guardada = repository.save(input);
+
+        // Publicar evento a RabbitMQ solo si es anotación NEGATIVA
+        anotacionPublisher.publicarAnotacionNegativa(guardada);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
 
