@@ -12,7 +12,7 @@ public class AsistenciaEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(AsistenciaEventListener.class);
 
-    @RabbitListener(queues = "${rabbitmq.queue.asistencia}")
+    @RabbitListener(queues = "${rabbitmq.queue.justificativos}")
     public void procesarEventoAsistencia(AsistenciaDTO dto) {
         try {
             log.info("Evento de asistencia recibido en justificativos: {}", dto);

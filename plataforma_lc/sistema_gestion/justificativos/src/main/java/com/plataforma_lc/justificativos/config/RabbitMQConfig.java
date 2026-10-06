@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue.asistencia}")
+    @Value("${rabbitmq.queue.justificativos}")
     private String queueName;
 
-    @Value("${rabbitmq.queue.asistencia.dlq}")
+    @Value("${rabbitmq.queue.justificativos.dlq}")
     private String dlqName;
 
     @Value("${rabbitmq.exchange.asistencia}")
@@ -28,9 +28,9 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.routingkey.asistencia.dlq}")
     private String dlqRoutingKey;
 
-    // 1. Cola principal asociada a Dead Letter Exchange
+    // 1. Cola principal propia de Justificativos
     @Bean
-    public Queue asistenciaQueue() {
+    public Queue justificativosQueue() {
         return QueueBuilder.durable(queueName)
                 .withArgument("x-dead-letter-exchange", dlxName)
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey)
@@ -39,7 +39,7 @@ public class RabbitMQConfig {
 
     // 2. Cola para Mensajes Fallidos (DLQ)
     @Bean
-    public Queue asistenciaDlq() {
+    public Queue justificativosDlq() {
         return QueueBuilder.durable(dlqName).build();
     }
 
@@ -56,17 +56,17 @@ public class RabbitMQConfig {
 
     // 4. Bindings con @Qualifier explícitos
     @Bean
-    public Binding asistenciaBinding(
-            @Qualifier("asistenciaQueue") Queue asistenciaQueue, 
+    public Binding justificativosBinding(
+            @Qualifier("justificativosQueue") Queue justificativosQueue,
             @Qualifier("asistenciaExchange") TopicExchange asistenciaExchange) {
-        return BindingBuilder.bind(asistenciaQueue).to(asistenciaExchange).with(routingKey);
+        return BindingBuilder.bind(justificativosQueue).to(asistenciaExchange).with(routingKey);
     }
 
     @Bean
-    public Binding dlqBinding(
-            @Qualifier("asistenciaDlq") Queue asistenciaDlq, 
+    public Binding justificativosDlqBinding(
+            @Qualifier("justificativosDlq") Queue justificativosDlq,
             @Qualifier("deadLetterExchange") TopicExchange deadLetterExchange) {
-        return BindingBuilder.bind(asistenciaDlq).to(deadLetterExchange).with(dlqRoutingKey);
+        return BindingBuilder.bind(justificativosDlq).to(deadLetterExchange).with(dlqRoutingKey);
     }
 
     // 5. Conversor JSON
