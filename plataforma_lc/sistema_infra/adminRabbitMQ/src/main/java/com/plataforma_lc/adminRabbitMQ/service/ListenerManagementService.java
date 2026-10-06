@@ -1,20 +1,18 @@
 package com.plataforma_lc.adminRabbitMQ.service;
 
-import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Servicio para controlar dinámicamente los Listener Containers de RabbitMQ.
  *
- * Métodos clave:
- *  - pause()  → Pausa el consumo (la conexión sigue abierta)
- *  - resume() → Reanuda el consumo
+ * En Spring AMQP 3.x (Spring Boot 3.x), los métodos pause()/resume() fueron
+ * eliminados de AbstractMessageListenerContainer. La forma estándar es usar:
+ *  - stop()  → Detiene el consumo (equivalente a pausar)
+ *  - start() → Reanuda el consumo
  *
  * Los IDs de listener se definen con el atributo 'id' en @RabbitListener.
  */
@@ -28,55 +26,43 @@ public class ListenerManagementService {
     }
 
     /**
-     * Obtiene el container como AbstractMessageListenerContainer para acceder
-     * a los métodos pause(), resume() y getListenerId(), que no están
-     * declarados en la interfaz MessageListenerContainer.
-     */
-    private AbstractMessageListenerContainer getAbstractContainer(String listenerId) {
-        MessageListenerContainer container = registry.getListenerContainer(listenerId);
-        if (container instanceof AbstractMessageListenerContainer abstractContainer) {
-            return abstractContainer;
-        }
-        return null;
-    }
-
-    /**
-     * Pausa el consumo de un listener por su ID.
-     * La conexión al broker permanece abierta; los mensajes se acumulan en la cola.
+     * Detiene el consumo de un listener por su ID.
+     * El container se desregistra del broker; los mensajes se acumulan en la cola.
+     * Equivalente funcional al "pause" en Spring AMQP 3.x.
      */
     public String pauseListener(String listenerId) {
-        AbstractMessageListenerContainer container = getAbstractContainer(listenerId);
+        MessageListenerContainer container = registry.getListenerContainer(listenerId);
         if (container == null) {
             return "Listener '" + listenerId + "' no encontrado.";
         }
         if (!container.isRunning()) {
             return "Listener '" + listenerId + "' ya estaba detenido.";
         }
-        container.pause();
-        return "Listener '" + listenerId + "' pausado correctamente.";
+        container.stop();
+        return "Listener '" + listenerId + "' detenido correctamente.";
     }
 
     /**
-     * Reanuda el consumo de un listener previamente pausado.
+     * Reanuda el consumo de un listener previamente detenido.
      */
     public String resumeListener(String listenerId) {
-        AbstractMessageListenerContainer container = getAbstractContainer(listenerId);
+        MessageListenerContainer container = registry.getListenerContainer(listenerId);
         if (container == null) {
             return "Listener '" + listenerId + "' no encontrado.";
         }
-        container.resume();
+        if (container.isRunning()) {
+            return "Listener '" + listenerId + "' ya estaba activo.";
+        }
+        container.start();
         return "Listener '" + listenerId + "' reanudado correctamente.";
     }
 
     /**
      * Retorna los IDs de todos los listeners registrados en este microservicio.
+     * Usa getListenerContainerIds() del registry, disponible en Spring AMQP 3.x.
      */
     public List<String> getAllListenerIds() {
-        Collection<MessageListenerContainer> containers = registry.getListenerContainers();
-        return containers.stream()
-                .filter(c -> c instanceof AbstractMessageListenerContainer)
-                .map(c -> ((AbstractMessageListenerContainer) c).getListenerId())
-                .collect(Collectors.toList());
+        return List.copyOf(registry.getListenerContainerIds());
     }
 }
 
