@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminRabbitMQ.service;
 
+import org.springframework.amqp.rabbit.listener.AbstractMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.RabbitListenerEndpointRegistry;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,24 @@ public class ListenerManagementService {
     }
 
     /**
+     * Obtiene el container como AbstractMessageListenerContainer para acceder
+     * a los métodos pause(), resume() y getListenerId(), que no están
+     * declarados en la interfaz MessageListenerContainer.
+     */
+    private AbstractMessageListenerContainer getAbstractContainer(String listenerId) {
+        MessageListenerContainer container = registry.getListenerContainer(listenerId);
+        if (container instanceof AbstractMessageListenerContainer abstractContainer) {
+            return abstractContainer;
+        }
+        return null;
+    }
+
+    /**
      * Pausa el consumo de un listener por su ID.
      * La conexión al broker permanece abierta; los mensajes se acumulan en la cola.
      */
     public String pauseListener(String listenerId) {
-        MessageListenerContainer container = registry.getListenerContainer(listenerId);
+        AbstractMessageListenerContainer container = getAbstractContainer(listenerId);
         if (container == null) {
             return "Listener '" + listenerId + "' no encontrado.";
         }
@@ -46,7 +60,7 @@ public class ListenerManagementService {
      * Reanuda el consumo de un listener previamente pausado.
      */
     public String resumeListener(String listenerId) {
-        MessageListenerContainer container = registry.getListenerContainer(listenerId);
+        AbstractMessageListenerContainer container = getAbstractContainer(listenerId);
         if (container == null) {
             return "Listener '" + listenerId + "' no encontrado.";
         }
@@ -60,7 +74,9 @@ public class ListenerManagementService {
     public List<String> getAllListenerIds() {
         Collection<MessageListenerContainer> containers = registry.getListenerContainers();
         return containers.stream()
-                .map(MessageListenerContainer::getListenerId)
+                .filter(c -> c instanceof AbstractMessageListenerContainer)
+                .map(c -> ((AbstractMessageListenerContainer) c).getListenerId())
                 .collect(Collectors.toList());
     }
 }
+
