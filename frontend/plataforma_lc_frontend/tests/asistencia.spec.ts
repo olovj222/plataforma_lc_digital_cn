@@ -1,29 +1,27 @@
 import { test, expect } from '@playwright/test';
 
-test.describe.configure({ mode: 'serial'});
-// ─── HELPER: LOGIN ───────────────────────────────────────────────────────────
-async function login(page: any, username: string, password: string) {
-  await page.waitForSelector('input[name="username"]');
-  await page.fill('input[name="username"]', username);
-  await page.fill('input[name="password"]', password);
-  await Promise.all([
-    page.waitForNavigation(),
-    page.click('id=kc-login')
-  ]);
-}
+/**
+ * E2E: Flujo completo de asistencia.
+ *
+ * La autenticación Azure AD NO se gestiona aquí. El archivo global-setup.ts
+ * inyecta el token en el localStorage antes de que arranque cualquier test,
+ * y playwright.config.ts carga ese estado de sesión en cada test automáticamente.
+ *
+ * Variable de entorno necesaria (aparte de las del global-setup):
+ *   TEST_FRONTEND_URL → URL pública del frontend (leída en playwright.config.ts).
+ */
+test.describe.configure({ mode: 'serial' });
 
 test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', async ({ page }) => {
   test.slow();
-  
-  // ⏱️ Sincronización de Infraestructura (Eureka & Gateway)
-  await page.waitForTimeout(20000);
 
-  // ─── PARTE 1: LOGIN COMO ADMIN Y CREAR CLASE ─────────────────────────────
-  await page.request.get('/asistencia/actuator/health').catch(() => {}); 
-  await page.waitForTimeout(5000); // 5 segundos de colchón térmico
-  await page.goto('/');
-  await login(page, 'admin1', 'admin123');
+  // ⏱️ Sincronización de infraestructura (Eureka & Gateway)
+  // Se reduce a 5s porque la sesión ya está inyectada, no hay redirect de Azure AD.
+  await page.waitForTimeout(5000);
 
+  // ─── PARTE 1: NAVEGAR COMO ADMIN A GESTIÓN DE CLASES ─────────────────────
+  // La sesión ya está activa gracias al storageState del global-setup.
+  // No es necesario ningún login manual.
   await page.goto('/admin/clase');
   await expect(page.getByRole('heading', { name: 'Gestión de Clases' })).toBeVisible();
 
@@ -31,7 +29,7 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   await expect(botonNuevaClase).toBeVisible();
   await botonNuevaClase.click();
 
-  // Usamos fecha y descripción dinámicas para evitar duplicados
+  // Usamos fecha dinámica para evitar duplicados entre ejecuciones
   const fechaFutura = new Date();
   fechaFutura.setDate(fechaFutura.getDate() + Math.floor(Math.random() * 365) + 30);
   const fechaHoy = fechaFutura.toISOString().split('T')[0];
@@ -44,50 +42,40 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   await textareaDescripcion.fill(descripcion);
   await expect(textareaDescripcion).toHaveValue(descripcion);
 
-  // 🔄 Captura segura del POST a /clase usando Promesas nativas de Playwright
+  // 🔄 Captura segura del POST a /clase
   const respuestaClasePromise = page.waitForResponse(
     response => response.url().includes('/clase') && response.request().method() === 'POST',
     { timeout: 10000 }
   );
 
   await page.getByRole('dialog').getByRole('button', { name: /registrar clase/i }).click();
-  
+
   const respuestaClase = await respuestaClasePromise;
-  console.log('Clase status:', respuestaClase.status());
-  const textoRespuesta = await respuestaClase.text();
-  console.log('👉 [E2E TEST] Código HTTP de Clase:', respuestaClase.status());
-  console.log('👉 [E2E TEST] Cuerpo de respuesta de Clase:', textoRespuesta);
+  console.log('👉 [E2E] Clase HTTP status:', respuestaClase.status());
 
-  // Si se queda aquí, el log de arriba te dirá en tu terminal la causa exacta (ej. un campo mal mapeado)
   await expect(page.getByRole('dialog')).toBeHidden();
-
-  // Verificamos que la clase aparece en la tabla
   await expect(page.getByRole('cell', { name: descripcion })).toBeVisible();
 
-  // ─── PARTE 2: CERRAR SESIÓN ADMIN ────────────────────────────────────────
-  await page.getByRole('button', { name: /cerrar sesión/i }).click();
-  await page.waitForSelector('input[name="username"]');
-
-  // ─── PARTE 3: LOGIN COMO PROFESOR ────────────────────────────────────────
-  await login(page, 'profesor1', 'profesor123');
-
-  // ─── PARTE 4: NAVEGAR A ASISTENCIAS ──────────────────────────────────────
+  // ─── PARTE 2: CAMBIAR A ROL PROFESOR ─────────────────────────────────────
+  // En lugar de hacer logout/login (que requeriría Azure AD de nuevo),
+  // navegamos directamente a la ruta del profesor. La sesión soporta ambos roles
+  // porque el token de prueba tiene los permisos necesarios.
   await page.goto('/profesor/mis-cursos/2/asistencia');
   await expect(page.getByText('Registro de Asistencia')).toBeVisible();
 
-  // ─── PARTE 5: ABRIR DIALOG DE REGISTRO ───────────────────────────────────
+  // ─── PARTE 3: ABRIR DIALOG DE REGISTRO ───────────────────────────────────
   await page.getByRole('button', { name: /registrar asistencia/i }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Registrar Asistencia' })).toBeVisible();
 
-  // ─── PARTE 6: SELECCIONAR CLASE ──────────────────────────────────────────
+  // ─── PARTE 4: SELECCIONAR CLASE ──────────────────────────────────────────
   await page.locator('label:has-text("Clase (Sesión)") + .MuiInputBase-root').click();
   const primeraClase = page.locator('li[role="option"]').first();
   await expect(primeraClase).toBeVisible();
   await primeraClase.click({ force: true });
   await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
 
-  // ─── PARTE 7: SELECCIONAR ESTUDIANTE ─────────────────────────────────────
+  // ─── PARTE 5: SELECCIONAR ESTUDIANTE ─────────────────────────────────────
   await page.locator('label:has-text("Estudiante") + .MuiInputBase-root').click();
   const primerEstudiante = page.locator('li[role="option"]').first();
   await expect(primerEstudiante).toBeVisible();
@@ -95,22 +83,16 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   await primerEstudiante.click({ force: true });
   await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
 
-  // ─── PARTE 8: SELECCIONAR ESTADO ─────────────────────────────────────────
+  // ─── PARTE 6: SELECCIONAR ESTADO ─────────────────────────────────────────
   await page.locator('label:has-text("Estado") + .MuiInputBase-root').click();
   await page.locator('li:has-text("Presente")').click({ force: true });
   await page.getByRole('heading', { name: 'Registrar Asistencia' }).click();
-  
-  // ─── PARTE 9: INGRESAR FECHA ─────────────────────────────────────────────
+
+  // ─── PARTE 7: INGRESAR FECHA ─────────────────────────────────────────────
   await expect(page.locator('.MuiBackdrop-invisible')).toBeHidden();
   await page.locator('input[type="date"]').fill(fechaHoy);
 
-  // ─── PARTE 10: GUARDAR ───────────────────────────────────────────────────
-  const valorClase = await page.locator('label:has-text("Clase (Sesión)") + .MuiInputBase-root').locator('input').inputValue();
-  console.log('Valor clase seleccionado:', valorClase);
-  const valorEstudiante = await page.locator('label:has-text("Estudiante") + .MuiInputBase-root').locator('input').inputValue();
-  console.log('Valor estudiante seleccionado:', valorEstudiante);
-
-  // 🔄 Captura segura del POST a /asistencia evitando bloqueos asíncronos globales
+  // ─── PARTE 8: GUARDAR ────────────────────────────────────────────────────
   const respuestaAsistenciaPromise = page.waitForResponse(
     response => response.url().includes('/asistencia') && response.request().method() === 'POST',
     { timeout: 10000 }
@@ -119,15 +101,15 @@ test('Flujo E2E: Admin crea clase, Profesor registra asistencia y la elimina', a
   await page.getByRole('button', { name: /guardar/i }).click({ force: true });
 
   const respuestaAsistencia = await respuestaAsistenciaPromise;
-  console.log('Asistencia status:', respuestaAsistencia.status());
+  console.log('👉 [E2E] Asistencia HTTP status:', respuestaAsistencia.status());
 
   await expect(page.getByRole('dialog')).toBeHidden();
 
-  // ─── PARTE 11: VERIFICAR QUE APARECE EN LA TABLA ─────────────────────────
+  // ─── PARTE 9: VERIFICAR QUE APARECE EN LA TABLA ──────────────────────────
   const filaAsistencia = page.getByRole('cell', { name: new RegExp(nombreEstudiante || '', 'i') }).first();
   await expect(filaAsistencia).toBeVisible();
 
-  // ─── PARTE 12: ELIMINAR LA ASISTENCIA ────────────────────────────────────
+  // ─── PARTE 10: ELIMINAR LA ASISTENCIA ────────────────────────────────────
   const fila = page.getByRole('row').filter({ hasText: nombreEstudiante || '' }).last();
   const botonEliminar = fila.getByRole('button');
 

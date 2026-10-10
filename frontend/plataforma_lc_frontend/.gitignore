@@ -32,3 +32,5 @@ dist-ssr
 /playwright/.auth/
 
 tsconfig.app.tsbuildinfo
+# Sesion de Playwright (generada por global-setup.ts, contiene tokens de Azure AD)
+.auth/

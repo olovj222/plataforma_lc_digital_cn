@@ -2,7 +2,17 @@
 
 # ─────────────────────────────────────────────────────────────────────────────
 # run-tests.sh — Ejecuta todos los tests de la plataforma LC
-# Uso: bash run-tests.sh
+#
+# USO LOCAL (sin AWS):
+#   bash run-tests.sh
+#   → Corre unitarios + integración. Los E2E de backend y frontend se saltan.
+#
+# USO CON EC2 (tras cada reinicio del laboratorio AWS):
+#   export TEST_BASE_URL=http://<nueva-ip-ec2>:8085
+#   export TEST_JWT_TOKEN=$(bash scripts/get-test-token.sh)
+#   export TEST_FRONTEND_URL=http://<nueva-ip-ec2>:5173   # si el frontend está en EC2
+#   bash run-tests.sh
+#   → Corre TODO, incluyendo los E2E contra el stack real.
 # ─────────────────────────────────────────────────────────────────────────────
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
@@ -15,6 +25,14 @@ echo ""
 echo "╔══════════════════════════════════════════════════════╗"
 echo "║         PLATAFORMA LC — SUITE DE TESTS               ║"
 echo "╚══════════════════════════════════════════════════════╝"
+echo ""
+
+# Mostramos el entorno activo para trazabilidad
+if [ -n "${TEST_BASE_URL:-}" ]; then
+  echo "  🌐 Modo AWS   → TEST_BASE_URL = $TEST_BASE_URL"
+else
+  echo "  🏠 Modo local → Los E2E de backend se saltarán (TEST_BASE_URL no definida)"
+fi
 echo ""
 
 # ─── 1. TESTS DE BACKEND (todos los ms con un solo comando) ──────────────────
@@ -63,7 +81,9 @@ echo ""
 
 cd "$FRONTEND_DIR" || { echo "❌ No se encontró $FRONTEND_DIR"; exit 1; }
 
-npx playwright test --headed
+# Corremos en modo headless por defecto (compatible con CI y con EC2 sin GUI).
+# Para ver el navegador en local: npx playwright test --headed
+npx playwright test
 PLAYWRIGHT_EXIT=$?
 
 if [ $PLAYWRIGHT_EXIT -ne 0 ]; then
