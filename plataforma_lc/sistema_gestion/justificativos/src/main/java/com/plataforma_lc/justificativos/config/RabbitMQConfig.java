@@ -34,6 +34,7 @@ public class RabbitMQConfig {
         return QueueBuilder.durable(queueName)
                 .withArgument("x-dead-letter-exchange", dlxName)
                 .withArgument("x-dead-letter-routing-key", dlqRoutingKey)
+                .ttl(5000)
                 .build();
     }
 
