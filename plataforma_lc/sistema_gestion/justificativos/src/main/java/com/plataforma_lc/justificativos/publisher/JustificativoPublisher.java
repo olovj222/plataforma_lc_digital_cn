@@ -32,6 +32,7 @@ public class JustificativoPublisher {
             payload.put("cursoId", justificativo.getCursoId());
             payload.put("fecha", justificativo.getFechaInasistencia().toString()); // ISO "YYYY-MM-DD"
             payload.put("estado", justificativo.getEstado().name()); // "PENDIENTE", "APROBADO", "RECHAZADO"
+            payload.put("motivo", justificativo.getMotivo());
 
             rabbitTemplate.convertAndSend(exchange, routingKey, payload);
             System.out.println(">>> Evento enviado exitosamente a RabbitMQ: " + payload);

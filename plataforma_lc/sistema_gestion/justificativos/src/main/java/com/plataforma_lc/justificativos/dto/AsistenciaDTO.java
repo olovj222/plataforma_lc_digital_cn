@@ -6,6 +6,7 @@ public class AsistenciaDTO {
     private Long id_estudiante;
     private String fecha;
     private String estado;
+    private String motivo;
 
     public Long getId() {
         return id;
@@ -45,5 +46,11 @@ public class AsistenciaDTO {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+        public String getMotivo() {
+         return motivo;
+    }
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
     }
 }

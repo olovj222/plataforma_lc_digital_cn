@@ -8,6 +8,7 @@ public class JustificativoEventDTO {
     private Long estudianteId;
     private Date fecha;
     private String estado;
+    private String motivo;
 
     public JustificativoEventDTO() {
     }
@@ -49,5 +50,11 @@ public class JustificativoEventDTO {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+    public String getMotivo() {
+         return motivo;
+    }
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
     }
 }

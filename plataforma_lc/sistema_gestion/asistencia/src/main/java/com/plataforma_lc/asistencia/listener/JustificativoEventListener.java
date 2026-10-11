@@ -5,8 +5,10 @@ import com.plataforma_lc.asistencia.entities.Asistencia;
 import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -17,51 +19,66 @@ import java.util.TimeZone;
 public class JustificativoEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(JustificativoEventListener.class);
+    private static final String MARCADOR_FALLO = "SIMULAR_FALLO_ASISTENCIA";
 
     @Autowired
     private AsistenciaRepository asistenciaRepository;
 
+    @Value("${rabbitmq.simulacion.fallos.habilitada:false}")
+    private boolean simulacionFallosHabilitada;
+
     @RabbitListener(queues = "${rabbitmq.queue.asistencia}")
     public void procesarJustificativoAprobado(JustificativoEventDTO dto) {
-        log.info("Evento recibido desde RabbitMQ para estudiante ID: {} con estado: {}",
-                dto.getEstudianteId(), dto.getEstado());
+        try {
+            log.info("Evento recibido desde RabbitMQ para estudiante ID: {} con estado: {}",
+                    dto.getEstudianteId(), dto.getEstado());
 
-        if ("APROBADO".equalsIgnoreCase(dto.getEstado())) {
-            if (dto.getEstudianteId() == null || dto.getFecha() == null) {
-                log.warn("Evento APROBADO omitido por datos incompletos en el DTO: {}", dto);
-                return;
+            if (simulacionFallosHabilitada
+                    && dto.getMotivo() != null
+                    && dto.getMotivo().contains(MARCADOR_FALLO)) {
+                throw new IllegalStateException("Fallo simulado del consumer");
             }
 
-            List<Asistencia> asistencias = asistenciaRepository.buscarPorEstudiante(dto.getEstudianteId());
+            if ("APROBADO".equalsIgnoreCase(dto.getEstado())) {
+                if (dto.getEstudianteId() == null || dto.getFecha() == null) {
+                    log.warn("Evento APROBADO omitido por datos incompletos en el DTO: {}", dto);
+                    return;
+                }
 
-            // Forzar TimeZone en UTC para evitar desfases de fechas por zona horaria local
-            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-            fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
+                List<Asistencia> asistencias = asistenciaRepository.buscarPorEstudiante(dto.getEstudianteId());
 
-            String fechaDTO = fmt.format(dto.getFecha());
+                // Forzar TimeZone en UTC para evitar desfases de fechas por zona horaria local
+                SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+                fmt.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-            boolean actualizada = false;
-            for (Asistencia asistencia : asistencias) {
-                if (asistencia.getFecha() != null) {
-                    String fechaAsistencia = fmt.format(asistencia.getFecha());
+                String fechaDTO = fmt.format(dto.getFecha());
 
-                    if (fechaAsistencia.equals(fechaDTO)) {
-                        asistencia.setEstado("JUSTIFIED");
-                        asistenciaRepository.save(asistencia);
-                        log.info("Asistencia ID {} actualizada exitosamente a JUSTIFIED para la fecha {}",
-                                asistencia.getId(), fechaDTO);
-                        actualizada = true;
+                boolean actualizada = false;
+                for (Asistencia asistencia : asistencias) {
+                    if (asistencia.getFecha() != null) {
+                        String fechaAsistencia = fmt.format(asistencia.getFecha());
+
+                        if (fechaAsistencia.equals(fechaDTO)) {
+                            asistencia.setEstado("JUSTIFIED");
+                            asistenciaRepository.save(asistencia);
+                            log.info("Asistencia ID {} actualizada exitosamente a JUSTIFIED para la fecha {}",
+                                    asistencia.getId(), fechaDTO);
+                            actualizada = true;
+                        }
                     }
                 }
+
+                if (!actualizada) {
+                    log.warn("No se encontró ningún registro de asistencia coincidente para el estudiante ID {} en la fecha {}",
+                            dto.getEstudianteId(), fechaDTO);
+                }
+            } else {
+                log.info("Evento procesado e ignorado por estar en estado: {}", dto.getEstado());
             }
 
-            if (!actualizada) {
-                log.warn(
-                        "No se encontró ningún registro de asistencia coincidente para el estudiante ID {} en la fecha {}",
-                        dto.getEstudianteId(), fechaDTO);
-            }
-        } else {
-            log.info("Evento procesado e ignorado por estar en estado: {}", dto.getEstado());
+        } catch (Exception e) {
+            log.error("Error al procesar evento de justificativo: {}. Redirigiendo a DLQ.", e.getMessage());
+            throw new AmqpRejectAndDontRequeueException(e);
         }
     }
 }

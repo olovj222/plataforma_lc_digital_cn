@@ -354,6 +354,7 @@ services:
       SPRING_RABBITMQ_ADDRESSES: rabbitmq-1:5672,rabbitmq-2:5672
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
+      RABBITMQ_SIMULACION_FALLOS_HABILITADA: "true"
     depends_on:
       mysql-justificativos:
         condition: service_healthy
