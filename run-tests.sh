@@ -5,7 +5,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
-BACKEND_DIR="$REPO_ROOT/plataforma_lc/sistema_gestion"
+BACKEND_ROOT_DIR="$REPO_ROOT/plataforma_lc"
 FRONTEND_DIR="$REPO_ROOT/frontend/plataforma_lc_frontend"
 
 FAILED=0
@@ -16,27 +16,26 @@ echo "║    PLATAFORMA LC — SUITE DE TESTS (DOCKER IN HOST)   ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""
 
-# Mostramos el entorno activo para trazabilidad
 if [ -n "${TEST_BASE_URL:-}" ]; then
   echo "  🌐 Modo AWS   → TEST_BASE_URL = $TEST_BASE_URL"
 else
-  echo "  🏠 Modo local → Los E2E de backend se saltarán (TEST_BASE_URL no definida)"
+  echo "  🏠 Modo local → Los E2E de backend se saltarán"
 fi
 echo ""
 
-# ─── 1. TESTS DE BACKEND (Maven en contenedor) ────────────────────────────────
+# ─── 1. TESTS DE BACKEND (Maven con POM Padre) ───────────────────────────────
 echo "▶ [1/3] Ejecutando tests de backend (Maven en Docker)..."
 echo ""
 
-if [ ! -d "$BACKEND_DIR" ]; then
-  echo "❌ No se encontró $BACKEND_DIR"
+if [ ! -d "$BACKEND_ROOT_DIR" ]; then
+  echo "❌ No se encontró $BACKEND_ROOT_DIR"
   exit 1
 fi
 
 docker run --rm \
   --net=host \
-  -v "$BACKEND_DIR":/app \
-  -w /app \
+  -v "$BACKEND_ROOT_DIR":/app \
+  -w /app/sistema_gestion \
   -v "$HOME/.m2":/root/.m2 \
   -e TEST_BASE_URL="$TEST_BASE_URL" \
   -e TEST_JWT_TOKEN="$TEST_JWT_TOKEN" \
@@ -56,7 +55,7 @@ fi
 
 echo ""
 
-# ─── 2. TESTS UNITARIOS E INTEGRACIÓN DEL FRONTEND (Vitest en Docker) ──────────
+# ─── 2. TESTS UNITARIOS E INTEGRACIÓN DEL FRONTEND (Vitest) ──────────────────
 echo "▶ [2/3] Ejecutando tests unitarios e integración del frontend (Vitest)..."
 echo ""
 
@@ -69,10 +68,11 @@ docker run --rm \
   --net=host \
   -v "$FRONTEND_DIR":/app \
   -w /app \
+  -v "$HOME/.npm":/root/.npm \
   -e TEST_BASE_URL="$TEST_BASE_URL" \
   -e TEST_JWT_TOKEN="$TEST_JWT_TOKEN" \
   -e TEST_FRONTEND_URL="$TEST_FRONTEND_URL" \
-  node:18-alpine npx vitest run
+  node:18-alpine sh -c "npm install && npx vitest run"
 
 VITEST_EXIT=$?
 
@@ -87,7 +87,7 @@ fi
 
 echo ""
 
-# ─── 3. TESTS E2E DEL FRONTEND (Playwright en Docker) ─────────────────────────
+# ─── 3. TESTS E2E DEL FRONTEND (Playwright) ──────────────────────────────────
 echo "▶ [3/3] Ejecutando tests E2E (Playwright)..."
 echo ""
 
@@ -95,10 +95,11 @@ docker run --rm \
   --net=host \
   -v "$FRONTEND_DIR":/app \
   -w /app \
+  -v "$HOME/.npm":/root/.npm \
   -e TEST_BASE_URL="$TEST_BASE_URL" \
   -e TEST_JWT_TOKEN="$TEST_JWT_TOKEN" \
   -e TEST_FRONTEND_URL="$TEST_FRONTEND_URL" \
-  mcr.microsoft.com/playwright:v1.40.0-jammy npx playwright test
+  mcr.microsoft.com/playwright:v1.40.0-jammy sh -c "npm install && npx playwright test"
 
 PLAYWRIGHT_EXIT=$?
 
