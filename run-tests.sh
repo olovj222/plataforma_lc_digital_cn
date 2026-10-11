@@ -1,14 +1,22 @@
 #!/bin/bash
 
 # ─────────────────────────────────────────────────────────────────────────────
-# run-tests.sh — Ejecuta todos los tests de la plataforma LC vía Docker
+# run-tests.sh — Suite de tests ejecutada en Docker cargando .env automáticamente
 # ─────────────────────────────────────────────────────────────────────────────
 
 REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+ENV_FILE="$REPO_ROOT/.env"
 BACKEND_ROOT_DIR="$REPO_ROOT/plataforma_lc"
 FRONTEND_DIR="$REPO_ROOT/frontend/plataforma_lc_frontend"
 
 FAILED=0
+
+# 1. Cargar .env en la sesión del script si existe
+if [ -f "$ENV_FILE" ]; then
+  set -o allexport
+  source "$ENV_FILE"
+  set +o allexport
+fi
 
 echo ""
 echo "╔══════════════════════════════════════════════════════╗"
@@ -23,6 +31,11 @@ else
 fi
 echo ""
 
+ENV_DOCKER_FLAG=""
+if [ -f "$ENV_FILE" ]; then
+  ENV_DOCKER_FLAG="--env-file $ENV_FILE"
+fi
+
 # ─── 1. TESTS DE BACKEND (Maven con POM Padre) ───────────────────────────────
 echo "▶ [1/3] Ejecutando tests de backend (Maven en Docker)..."
 echo ""
@@ -34,12 +47,10 @@ fi
 
 docker run --rm \
   --net=host \
+  $ENV_DOCKER_FLAG \
   -v "$BACKEND_ROOT_DIR":/app \
   -w /app/sistema_gestion \
   -v "$HOME/.m2":/root/.m2 \
-  -e TEST_BASE_URL="$TEST_BASE_URL" \
-  -e TEST_JWT_TOKEN="$TEST_JWT_TOKEN" \
-  -e TEST_FRONTEND_URL="$TEST_FRONTEND_URL" \
   maven:3.9-eclipse-temurin-17 mvn test --no-transfer-progress
 
 BACKEND_EXIT=$?
@@ -66,12 +77,10 @@ fi
 
 docker run --rm \
   --net=host \
+  $ENV_DOCKER_FLAG \
   -v "$FRONTEND_DIR":/app \
   -w /app \
   -v "$HOME/.npm":/root/.npm \
-  -e TEST_BASE_URL="$TEST_BASE_URL" \
-  -e TEST_JWT_TOKEN="$TEST_JWT_TOKEN" \
-  -e TEST_FRONTEND_URL="$TEST_FRONTEND_URL" \
   node:18-alpine sh -c "npm install && npx vitest run"
 
 VITEST_EXIT=$?
@@ -93,12 +102,10 @@ echo ""
 
 docker run --rm \
   --net=host \
+  $ENV_DOCKER_FLAG \
   -v "$FRONTEND_DIR":/app \
   -w /app \
   -v "$HOME/.npm":/root/.npm \
-  -e TEST_BASE_URL="$TEST_BASE_URL" \
-  -e TEST_JWT_TOKEN="$TEST_JWT_TOKEN" \
-  -e TEST_FRONTEND_URL="$TEST_FRONTEND_URL" \
   mcr.microsoft.com/playwright:v1.40.0-jammy sh -c "npm install && npx playwright test"
 
 PLAYWRIGHT_EXIT=$?
