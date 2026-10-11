@@ -16,22 +16,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue.anotaciones}")
+    @Value("${rabbitmq.queue.anotaciones:anotaciones.queue}")
     private String queueName;
 
-    @Value("${rabbitmq.queue.anotaciones.dlq}")
+    @Value("${rabbitmq.queue.anotaciones.dlq:anotaciones.dlq}")
     private String dlqName;
 
-    @Value("${rabbitmq.exchange.anotaciones}")
+    @Value("${rabbitmq.exchange.anotaciones:anotaciones.exchange}")
     private String exchangeName;
 
-    @Value("${rabbitmq.exchange.anotaciones.dlx}")
+    @Value("${rabbitmq.exchange.anotaciones.dlx:anotaciones.dlx}")
     private String dlxName;
 
-    @Value("${rabbitmq.routingkey.anotaciones}")
+    @Value("${rabbitmq.routingkey.anotaciones:anotaciones.routingkey}")
     private String routingKey;
 
-    @Value("${rabbitmq.routingkey.anotaciones.dlq}")
+    @Value("${rabbitmq.routingkey.anotaciones.dlq:anotaciones.dlq.routingkey}")
     private String dlqRoutingKey;
 
     // 1. Cola principal con DLX

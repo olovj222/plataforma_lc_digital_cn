@@ -10,10 +10,10 @@ public class AsistenciaPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @Value("${rabbitmq.exchange.asistencia}")
+    @Value("${rabbitmq.exchange.asistencia:asistencia.exchange}")
     private String exchange;
 
-    @Value("${rabbitmq.routingkey.asistencia}")
+    @Value("${rabbitmq.routingkey.asistencia:asistencia.routingkey}")
     private String routingKey;
 
     public AsistenciaPublisher(RabbitTemplate rabbitTemplate) {

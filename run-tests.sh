@@ -11,11 +11,15 @@ FRONTEND_DIR="$REPO_ROOT/frontend/plataforma_lc_frontend"
 
 FAILED=0
 
-# 1. Cargar .env en la sesión del script si existe
+# 1. Cargar .env en la sesión del script si existe (de manera segura sin fallar por sintaxis inválida)
 if [ -f "$ENV_FILE" ]; then
-  set -o allexport
-  source "$ENV_FILE"
-  set +o allexport
+  while IFS='=' read -r key val || [ -n "$key" ]; do
+    key=$(echo "$key" | tr -d ' \r\n\t')
+    if [[ "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+      val=$(echo "$val" | sed -e 's/\r$//' -e 's/^"//' -e 's/"$//' -e "s/^'//" -e "s/'$//")
+      export "$key=$val"
+    fi
+  done < "$ENV_FILE"
 fi
 
 echo ""
@@ -23,6 +27,20 @@ echo "╔═══════════════════════�
 echo "║    PLATAFORMA LC — SUITE DE TESTS (DOCKER IN HOST)   ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""
+
+# 2. Si se van a ejecutar E2E y no hay token pero sí credenciales Azure, obtenerlo
+if [ -n "${TEST_BASE_URL:-}" ] && [ -z "${TEST_JWT_TOKEN:-}" ] && [ -n "${AZURE_CLIENT_SECRET:-}" ]; then
+  echo "🔑 Obteniendo TEST_JWT_TOKEN automáticamente desde Azure AD..."
+  if [ -f "$REPO_ROOT/scripts/get-test-token.sh" ]; then
+    GENERATED_TOKEN=$(bash "$REPO_ROOT/scripts/get-test-token.sh" 2>/dev/null || true)
+    if [ -n "$GENERATED_TOKEN" ]; then
+      export TEST_JWT_TOKEN="$GENERATED_TOKEN"
+      echo "  ✅ Token JWT obtenido exitosamente para tests E2E"
+    else
+      echo "  ⚠️ No se pudo obtener el token JWT de Azure AD automáticamente."
+    fi
+  fi
+fi
 
 if [ -n "${TEST_BASE_URL:-}" ]; then
   echo "  🌐 Modo AWS   → TEST_BASE_URL = $TEST_BASE_URL"
@@ -36,6 +54,14 @@ if [ -f "$ENV_FILE" ]; then
   ENV_DOCKER_FLAG="--env-file $ENV_FILE"
 fi
 
+# Variables de entorno adicionales para Docker (--net=host conecta a localhost del host)
+DOCKER_TEST_ENVS=(
+  -e "SPRING_RABBITMQ_ADDRESSES=${SPRING_RABBITMQ_ADDRESSES:-localhost:5672}"
+  -e "TEST_JWT_TOKEN=${TEST_JWT_TOKEN:-}"
+  -e "TEST_BASE_URL=${TEST_BASE_URL:-}"
+  -e "TEST_FRONTEND_URL=${TEST_FRONTEND_URL:-}"
+)
+
 # ─── 1. TESTS DE BACKEND (Maven con POM Padre) ───────────────────────────────
 echo "▶ [1/3] Ejecutando tests de backend (Maven en Docker)..."
 echo ""
@@ -48,6 +74,7 @@ fi
 docker run --rm \
   --net=host \
   $ENV_DOCKER_FLAG \
+  "${DOCKER_TEST_ENVS[@]}" \
   -v "$BACKEND_ROOT_DIR":/app \
   -w /app/sistema_gestion \
   -v "$HOME/.m2":/root/.m2 \
@@ -78,6 +105,7 @@ fi
 docker run --rm \
   --net=host \
   $ENV_DOCKER_FLAG \
+  "${DOCKER_TEST_ENVS[@]}" \
   -v "$FRONTEND_DIR":/app \
   -w /app \
   -v "$HOME/.npm":/root/.npm \
@@ -103,6 +131,7 @@ echo ""
 docker run --rm \
   --net=host \
   $ENV_DOCKER_FLAG \
+  "${DOCKER_TEST_ENVS[@]}" \
   -v "$FRONTEND_DIR":/app \
   -w /app \
   -v "$HOME/.npm":/root/.npm \

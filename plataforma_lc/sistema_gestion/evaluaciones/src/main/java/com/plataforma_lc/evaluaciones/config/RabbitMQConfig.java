@@ -10,22 +10,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.queue.evaluaciones}")
+    @Value("${rabbitmq.queue.evaluaciones:evaluaciones.queue}")
     private String queueName;
 
-    @Value("${rabbitmq.queue.evaluaciones.dlq}")
+    @Value("${rabbitmq.queue.evaluaciones.dlq:evaluaciones.dlq}")
     private String dlqName;
 
-    @Value("${rabbitmq.exchange.evaluaciones}")
+    @Value("${rabbitmq.exchange.evaluaciones:evaluaciones.exchange}")
     private String exchangeName;
 
-    @Value("${rabbitmq.exchange.evaluaciones.dlx}")
+    @Value("${rabbitmq.exchange.evaluaciones.dlx:evaluaciones.dlx}")
     private String dlxName;
 
-    @Value("${rabbitmq.routingkey.evaluaciones}")
+    @Value("${rabbitmq.routingkey.evaluaciones:evaluaciones.routingkey}")
     private String routingKey;
 
-    @Value("${rabbitmq.routingkey.evaluaciones.dlq}")
+    @Value("${rabbitmq.routingkey.evaluaciones.dlq:evaluaciones.dlq.routingkey}")
     private String dlqRoutingKey;
 
     // 1. Cola principal asociada a Dead Letter Exchange

@@ -23,7 +23,7 @@ public class AnotacionEventListener {
     @Value("${rabbitmq.simulacion.fallos.habilitada:false}")
     private boolean simulacionFallosHabilitada;
 
-    @RabbitListener(queues = "${rabbitmq.queue.anotaciones}")
+    @RabbitListener(queues = "${rabbitmq.queue.anotaciones:anotaciones.queue}")
     public void procesarAnotacionNegativa(AnotacionEventDTO dto) {
         try {
             log.warn("Anotación NEGATIVA recibida — estudianteId: {}, cursoId: {}, descripcion: '{}', autorId: {}",

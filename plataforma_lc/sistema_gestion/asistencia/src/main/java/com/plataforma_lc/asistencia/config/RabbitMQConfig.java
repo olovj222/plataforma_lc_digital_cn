@@ -11,41 +11,41 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     // ── Dominio: asistencia ──────────────────────────────────────────────────
-    @Value("${rabbitmq.queue.asistencia}")
+    @Value("${rabbitmq.queue.asistencia:asistencia.queue}")
     private String queueName;
 
-    @Value("${rabbitmq.queue.asistencia.dlq}")
+    @Value("${rabbitmq.queue.asistencia.dlq:asistencia.dlq}")
     private String dlqName;
 
-    @Value("${rabbitmq.exchange.asistencia}")
+    @Value("${rabbitmq.exchange.asistencia:asistencia.exchange}")
     private String exchangeName;
 
-    @Value("${rabbitmq.exchange.dlx}")
+    @Value("${rabbitmq.exchange.dlx:asistencia.dlx}")
     private String dlxName;
 
-    @Value("${rabbitmq.routingkey.asistencia}")
+    @Value("${rabbitmq.routingkey.asistencia:asistencia.routingkey}")
     private String routingKey;
 
-    @Value("${rabbitmq.routingkey.asistencia.dlq}")
+    @Value("${rabbitmq.routingkey.asistencia.dlq:asistencia.dlq.routingkey}")
     private String dlqRoutingKey;
 
     // ── Dominio: evaluaciones (consumer idempotente) ─────────────────────────
-    @Value("${rabbitmq.queue.evaluaciones}")
+    @Value("${rabbitmq.queue.evaluaciones:evaluaciones.queue}")
     private String evalQueueName;
 
-    @Value("${rabbitmq.queue.evaluaciones.dlq}")
+    @Value("${rabbitmq.queue.evaluaciones.dlq:evaluaciones.dlq}")
     private String evalDlqName;
 
-    @Value("${rabbitmq.exchange.evaluaciones}")
+    @Value("${rabbitmq.exchange.evaluaciones:evaluaciones.exchange}")
     private String evalExchangeName;
 
-    @Value("${rabbitmq.exchange.evaluaciones.dlx}")
+    @Value("${rabbitmq.exchange.evaluaciones.dlx:evaluaciones.dlx}")
     private String evalDlxName;
 
-    @Value("${rabbitmq.routingkey.evaluaciones}")
+    @Value("${rabbitmq.routingkey.evaluaciones:evaluaciones.routingkey}")
     private String evalRoutingKey;
 
-    @Value("${rabbitmq.routingkey.evaluaciones.dlq}")
+    @Value("${rabbitmq.routingkey.evaluaciones.dlq:evaluaciones.dlq.routingkey}")
     private String evalDlqRoutingKey;
 
     // ════════════════════════════════════════════════════════════════════════

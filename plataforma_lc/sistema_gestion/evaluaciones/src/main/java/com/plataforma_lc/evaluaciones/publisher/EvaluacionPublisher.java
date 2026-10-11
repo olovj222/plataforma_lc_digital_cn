@@ -13,10 +13,10 @@ public class EvaluacionPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @Value("${rabbitmq.exchange.evaluaciones}")
+    @Value("${rabbitmq.exchange.evaluaciones:evaluaciones.exchange}")
     private String exchange;
 
-    @Value("${rabbitmq.routingkey.evaluaciones}")
+    @Value("${rabbitmq.routingkey.evaluaciones:evaluaciones.routingkey}")
     private String routingKey;
 
     public EvaluacionPublisher(RabbitTemplate rabbitTemplate) {

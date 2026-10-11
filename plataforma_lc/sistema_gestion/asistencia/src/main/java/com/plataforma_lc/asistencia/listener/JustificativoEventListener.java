@@ -21,7 +21,7 @@ public class JustificativoEventListener {
     @Autowired
     private AsistenciaRepository asistenciaRepository;
 
-    @RabbitListener(queues = "${rabbitmq.queue.asistencia}")
+    @RabbitListener(queues = "${rabbitmq.queue.asistencia:asistencia.queue}")
     public void procesarJustificativoAprobado(JustificativoEventDTO dto) {
         log.info("Evento recibido desde RabbitMQ para estudiante ID: {} con estado: {}",
                 dto.getEstudianteId(), dto.getEstado());

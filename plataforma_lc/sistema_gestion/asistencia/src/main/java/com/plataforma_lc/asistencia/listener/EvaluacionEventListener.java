@@ -23,7 +23,7 @@ public class EvaluacionEventListener {
     @Value("${rabbitmq.simulacion.fallos.habilitada:false}")
     private boolean simulacionFallosHabilitada;
 
-    @RabbitListener(queues = "${rabbitmq.queue.evaluaciones}")
+    @RabbitListener(queues = "${rabbitmq.queue.evaluaciones:evaluaciones.queue}")
     public void procesarEvaluacion(EvaluacionEventDTO dto) {
         try {
             log.info("Calificación registrada — estudianteId: {}, cursoId: {}, evaluacion: '{}', calificacion: {}",
