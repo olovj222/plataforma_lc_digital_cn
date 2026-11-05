@@ -12,5 +12,7 @@
         <module>adminSpringBoot</module>
         <module>eurekaServer</module>
         <module>apiGateway</module>
+        <module>adminRabbitMQ</module>
+        <module>adminKafka</module>
     </modules>
 </project>
