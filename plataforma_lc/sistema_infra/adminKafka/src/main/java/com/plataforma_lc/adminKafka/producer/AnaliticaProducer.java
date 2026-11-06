@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * Productor Kafka para el stream de analítica de asistencia.
  * Publica mensajes al tópico "asistencia.analitica.stream" con acks=all.
- * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
+ * Utiliza callbacks asíncronos para registrar éxito o errores.
  */
 @Slf4j
 @Service

@@ -7,9 +7,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 /**
- * Productor Kafka para eventos de auditoría.
- * Publica mensajes al tópico "plataforma.auditoria.eventos" con acks=all.
- * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
+ * Publica mensajes al tópic "plataforma.auditoria.eventos" con acks=all.
+ * Utiliza callbacks asíncronos para registrar éxito o errores.
  */
 @Slf4j
 @Service
@@ -21,11 +20,11 @@ public class AuditoriaProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     /**
-     * Publica un evento de auditoría al tópico correspondiente.
+     * Publica un evento de auditoría al topic correspondiente.
      * La clave de partición se basa en el nombre del servicio para agrupar
      * eventos del mismo microservicio en la misma partición.
      *
-     * @param evento DTO con los datos del evento de auditoría
+     * @paramEventoDTO con los datos del evento de auditoría
      */
     public void publicar(AuditoriaEventDTO evento) {
         String key = evento.getServicio();

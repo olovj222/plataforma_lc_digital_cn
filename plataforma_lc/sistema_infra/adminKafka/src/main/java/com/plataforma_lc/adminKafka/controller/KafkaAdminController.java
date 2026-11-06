@@ -20,8 +20,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /**
- * Controlador REST para la administración de tópicos y consumer groups de Kafka.
- * Proporciona endpoints para listar, crear, inspeccionar y eliminar tópicos,
+ *  * Proporciona endpoints para listar, crear, inspeccionar y eliminar tópicos,
  * así como consultar consumer groups activos y sus offsets.
  */
 @Slf4j
@@ -37,7 +36,7 @@ public class KafkaAdminController {
     // ========================================================================================
 
     /**
-     * Lista todos los tópicos del clúster Kafka (excluyendo los internos).
+     * Lista todos los topics del clúster Kafka (excluyendo los internos).
      * GET /api/kafka/admin/topics
      */
     @GetMapping
@@ -51,23 +50,23 @@ public class KafkaAdminController {
             response.put("totalTopicos", topicos.size());
             response.put("topicos", topicos.stream().sorted().collect(Collectors.toList()));
 
-            log.info("[KAFKA-ADMIN] Tópicos listados exitosamente: {} tópicos encontrados", topicos.size());
+            log.info("[KAFKA-ADMIN] Topic listados exitosamente: {} tópicos encontrados", topicos.size());
             return ResponseEntity.ok(response);
 
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] Error al listar tópicos: {}", e.getMessage(), e);
+            log.error("[KAFKA-ADMIN] Error al listar topics: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al listar tópicos: " + e.getMessage()));
+                    .body(Map.of("error", "Error al listar topic: " + e.getMessage()));
         }
     }
 
     // ========================================================================================
-    // CREAR TÓPICO
+    // CREAR TopicO
     // ========================================================================================
 
     /**
-     * Crea un nuevo tópico con parámetros dinámicos.
+     * Crea un nuevo topic con parámetros dinámicos.
      * POST /api/kafka/admin/topics
      */
     @PostMapping
@@ -89,44 +88,44 @@ public class KafkaAdminController {
             adminClient.createTopics(Collections.singletonList(nuevoTopico)).all().get();
 
             Map<String, Object> response = new LinkedHashMap<>();
-            response.put("mensaje", "Tópico creado exitosamente");
+            response.put("mensaje", "Topic creado exitosamente");
             response.put("nombre", request.getNombre());
             response.put("particiones", request.getParticiones());
             response.put("factorReplicacion", request.getFactorReplicacion());
             response.put("retentionMs", request.getRetentionMs());
             response.put("cleanupPolicy", request.getCleanupPolicy());
 
-            log.info("[KAFKA-ADMIN] ✅ Tópico creado: nombre={}, particiones={}, réplicas={}",
+            log.info("[KAFKA-ADMIN] ✅ Topic creado: nombre={}, particiones={}, réplicas={}",
                     request.getNombre(), request.getParticiones(), request.getFactorReplicacion());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] ❌ Error al crear tópico '{}': {}", request.getNombre(), e.getMessage(), e);
+            log.error("[KAFKA-ADMIN] ❌ Error al crear topic '{}': {}", request.getNombre(), e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al crear tópico: " + e.getMessage()));
+                    .body(Map.of("error", "Error al crear topic: " + e.getMessage()));
         }
     }
 
     // ========================================================================================
-    // INSPECCIONAR TÓPICO (detalles: particiones, réplicas, ISR, configuraciones)
+    // INSPECCIONAR Topic (detalles: particiones, réplicas, ISR, configuraciones)
     // ========================================================================================
 
     /**
-     * Obtiene los detalles completos de un tópico: particiones, réplicas, ISR y configuraciones.
+     * Obtiene los detalles completos de un topic: particiones, réplicas, ISR y configuraciones.
      * GET /api/kafka/admin/topics/{nombreTopico}
      */
     @GetMapping("/{nombreTopico}")
     public ResponseEntity<Map<String, Object>> inspeccionarTopico(@PathVariable String nombreTopico) {
         try {
-            // Obtener descripción del tópico
+            // Obtener descripción del topic
             TopicDescription descripcion = adminClient
                     .describeTopics(Collections.singletonList(nombreTopico))
                     .topicNameValues()
                     .get(nombreTopico)
                     .get();
 
-            // Obtener configuraciones del tópico
+            // Obtener configuraciones del topico
             ConfigResource recurso = new ConfigResource(ConfigResource.Type.TOPIC, nombreTopico);
             Config config = adminClient
                     .describeConfigs(Collections.singletonList(recurso))
@@ -158,7 +157,7 @@ public class KafkaAdminController {
             }
             response.put("particiones", particiones);
 
-            // Configuraciones del tópico
+            // Configuraciones del topic
             Map<String, String> configuraciones = new LinkedHashMap<>();
             for (ConfigEntry entry : config.entries()) {
                 if (!entry.isDefault()) {
@@ -167,23 +166,23 @@ public class KafkaAdminController {
             }
             response.put("configuracionesPersonalizadas", configuraciones);
 
-            log.info("[KAFKA-ADMIN] Tópico inspeccionado: {}", nombreTopico);
+            log.info("[KAFKA-ADMIN] Topic inspeccionado: {}", nombreTopico);
             return ResponseEntity.ok(response);
 
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] Error al inspeccionar tópico '{}': {}", nombreTopico, e.getMessage(), e);
+            log.error("[KAFKA-ADMIN] Error al inspeccionar topic '{}': {}", nombreTopico, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Tópico no encontrado o error al inspeccionar: " + e.getMessage()));
+                    .body(Map.of("error", "Topic no encontrado o error al inspeccionar: " + e.getMessage()));
         }
     }
 
     // ========================================================================================
-    // ELIMINAR TÓPICO
+    // ELIMINAR ToPIC
     // ========================================================================================
 
     /**
-     * Elimina un tópico del clúster Kafka.
+     * Elimina un topic del clúster Kafka.
      * DELETE /api/kafka/admin/topics/{nombreTopico}
      */
     @DeleteMapping("/{nombreTopico}")
@@ -192,17 +191,17 @@ public class KafkaAdminController {
             adminClient.deleteTopics(Collections.singletonList(nombreTopico)).all().get();
 
             Map<String, Object> response = new LinkedHashMap<>();
-            response.put("mensaje", "Tópico eliminado exitosamente");
+            response.put("mensaje", "Topic eliminado exitosamente");
             response.put("nombre", nombreTopico);
 
-            log.info("[KAFKA-ADMIN] ✅ Tópico eliminado: {}", nombreTopico);
+            log.info("[KAFKA-ADMIN] ✅ Topic eliminado: {}", nombreTopico);
             return ResponseEntity.ok(response);
 
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] ❌ Error al eliminar tópico '{}': {}", nombreTopico, e.getMessage(), e);
+            log.error("[KAFKA-ADMIN] ❌ Error al eliminar topic '{}': {}", nombreTopico, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al eliminar tópico: " + e.getMessage()));
+                    .body(Map.of("error", "Error al eliminar topic: " + e.getMessage()));
         }
     }
 

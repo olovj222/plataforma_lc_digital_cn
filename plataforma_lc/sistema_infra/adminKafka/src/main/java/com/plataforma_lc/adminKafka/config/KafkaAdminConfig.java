@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Configuración del AdminClient de Kafka.
  * Instancia un Bean AdminClient conectado al clúster de 3 brokers
- * para la gestión programática de tópicos y consumer groups.
+ * para la gestión programática de topic y consumer groups.
  */
 @Configuration
 public class KafkaAdminConfig {

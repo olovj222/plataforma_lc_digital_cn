@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * DTO para el stream de analítica de asistencia.
  * Representa el estado de asistencia de un estudiante a un curso en una fecha determinada.
  */
 @Data

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * DTO para eventos de alertas de la plataforma.
  * Permite notificar situaciones que requieren atención inmediata.
  */
 @Data

@@ -7,7 +7,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 /**
- * Consumidor Kafka para el stream de analítica de asistencia.
  * Escucha el tópico "asistencia.analitica.stream" con el consumer group
  * "plataforma-analitica-group". Incluye manejo explícito de excepciones
  * para prevenir la detención del consumidor ante mensajes defectuosos.

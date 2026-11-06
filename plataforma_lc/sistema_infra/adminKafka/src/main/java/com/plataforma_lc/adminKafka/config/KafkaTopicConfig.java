@@ -6,15 +6,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
 /**
- * Declaración programática de los 3 tópicos principales de la plataforma.
+ * Declaración programática de los 3 toic principales de la plataforma.
  * Se crean al arrancar la aplicación utilizando TopicBuilder.
- * Si los tópicos ya existen, Spring Kafka los ignora sin error.
+ * Si los topci ya existen, Spring Kafka los ignora sin error.
  */
 @Configuration
 public class KafkaTopicConfig {
 
     /**
-     * Tópico de auditoría para eventos del sistema.
+     * Topic de auditoría para eventos del sistema.
      * Retención: 7 días (604800000 ms)
      */
     @Bean
@@ -28,7 +28,7 @@ public class KafkaTopicConfig {
     }
 
     /**
-     * Tópico de analítica de asistencia (stream de datos).
+     * Topic de analítica de asistencia (stream de datos).
      * Retención: 30 días (2592000000 ms)
      */
     @Bean
@@ -42,7 +42,7 @@ public class KafkaTopicConfig {
     }
 
     /**
-     * Tópico de alertas críticas de la plataforma.
+     * Topic alertas críticas de la plataforma.
      * Retención: 14 días (1209600000 ms)
      */
     @Bean

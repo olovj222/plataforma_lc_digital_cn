@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Controlador REST para la publicación de mensajes a los tópicos Kafka.
  * Proporciona endpoints para enviar eventos de auditoría, analítica y alertas.
  * Útil para pruebas manuales y para que otros microservicios publiquen vía HTTP.
  */

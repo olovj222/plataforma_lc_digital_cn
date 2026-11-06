@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * Productor Kafka para eventos de alertas críticas.
  * Publica mensajes al tópico "plataforma.alertas.criticas" con acks=all.
- * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
+ * Utiliza callbacks asíncronos para registrar éxito o errores.
  */
 @Slf4j
 @Service

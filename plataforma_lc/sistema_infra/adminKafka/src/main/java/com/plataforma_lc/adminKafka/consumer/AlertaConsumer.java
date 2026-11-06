@@ -7,7 +7,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 /**
- * Consumidor Kafka para alertas críticas de la plataforma.
  * Escucha el tópico "plataforma.alertas.criticas" con el consumer group
  * "plataforma-alertas-group". Incluye manejo explícito de excepciones
  * para prevenir la detención del consumidor ante mensajes defectuosos.

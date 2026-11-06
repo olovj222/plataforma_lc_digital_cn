@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Consumidor Kafka para eventos de auditoría.
- * Escucha el tópico "plataforma.auditoria.eventos" con el consumer group
+ * Escucha el topc "plataforma.auditoria.eventos" con el consumer group
  * "plataforma-auditoria-group". Incluye manejo explícito de excepciones
  * para prevenir la detención del consumidor ante mensajes defectuosos.
  */
