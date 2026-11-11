@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminKafka.producer;
 
+import com.plataforma_lc.adminKafka.config.KafkaTopics;
 import com.plataforma_lc.adminKafka.dto.AnaliticaStreamDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,15 +9,17 @@ import org.springframework.stereotype.Service;
 
 /**
  * Productor Kafka para el stream de analítica de asistencia.
- * Publica mensajes al tópico "asistencia.analitica.stream" con acks=all.
- * Utiliza callbacks asíncronos para registrar éxito o errores.
+ * Publica mensajes al tópico {@link KafkaTopics#ASISTENCIA_ANALITICA_STREAM}
+ * con acks=all.
+ * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o
+ * errores.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnaliticaProducer {
 
-    private static final String TOPIC = "asistencia.analitica.stream";
+    private static final String TOPIC = KafkaTopics.ASISTENCIA_ANALITICA_STREAM;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -35,15 +38,16 @@ public class AnaliticaProducer {
         kafkaTemplate.send(TOPIC, key, dto)
                 .whenComplete((result, ex) -> {
                     if (ex == null) {
-                        log.info("[ANALITICA-PRODUCER] ✅ Stream publicado exitosamente -> topic={}, partition={}, offset={}",
+                        log.info(
+                                "[ANALITICA-PRODUCER] ✅ Stream publicado exitosamente -> topic={}, partition={}, offset={}",
                                 result.getRecordMetadata().topic(),
                                 result.getRecordMetadata().partition(),
                                 result.getRecordMetadata().offset());
                     } else {
-                        log.error("[ANALITICA-PRODUCER] ❌ Error al publicar stream de analítica: cursoId={}, estudianteId={} -> {}",
+                        log.error(
+                                "[ANALITICA-PRODUCER] ❌ Error al publicar stream de analítica: cursoId={}, estudianteId={} -> {}",
                                 dto.getCursoId(), dto.getEstudianteId(), ex.getMessage(), ex);
                     }
                 });
     }
 }
-
