@@ -36,7 +36,7 @@ public class KafkaConsumerGroupController {
      * GET /api/kafka/admin/consumer-groups/{groupId}
      */
     @GetMapping("/{groupId}")
-    public ResponseEntity<ConsumerGroupDetalleResponse> describirConsumerGroup(@PathVariable String groupId) {
+    public ResponseEntity<ConsumerGroupDetalleResponse> describirConsumerGroup(@PathVariable("groupId") String groupId) {
         return ResponseEntity.ok(adminService.describirConsumerGroup(groupId));
     }
 
@@ -45,7 +45,7 @@ public class KafkaConsumerGroupController {
      * DELETE /api/kafka/admin/consumer-groups/{groupId}
      */
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<MensajeResponse> eliminarConsumerGroup(@PathVariable String groupId) {
+    public ResponseEntity<MensajeResponse> eliminarConsumerGroup(@PathVariable("groupId") String groupId) {
         return ResponseEntity.ok(adminService.eliminarConsumerGroup(groupId));
     }
 }

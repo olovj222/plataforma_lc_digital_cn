@@ -53,7 +53,7 @@ public class KafkaAdminController {
      * GET /api/kafka/admin/topics/{nombreTopico}
      */
     @GetMapping("/topics/{nombreTopico}")
-    public ResponseEntity<TopicoDetalleResponse> inspeccionarTopico(@PathVariable String nombreTopico) {
+    public ResponseEntity<TopicoDetalleResponse> inspeccionarTopico(@PathVariable("nombreTopico") String nombreTopico) {
         return ResponseEntity.ok(adminService.inspeccionarTopico(nombreTopico));
     }
 
@@ -63,7 +63,7 @@ public class KafkaAdminController {
      */
     @PutMapping("/topics/{nombreTopico}/config")
     public ResponseEntity<MensajeResponse> modificarConfiguracion(
-            @PathVariable String nombreTopico,
+            @PathVariable("nombreTopico") String nombreTopico,
             @RequestBody Map<String, String> configs) {
         return ResponseEntity.ok(adminService.modificarConfiguracion(nombreTopico, configs));
     }
@@ -74,7 +74,7 @@ public class KafkaAdminController {
      */
     @PutMapping("/topics/{nombreTopico}/particiones")
     public ResponseEntity<MensajeResponse> aumentarParticiones(
-            @PathVariable String nombreTopico,
+            @PathVariable("nombreTopico") String nombreTopico,
             @RequestBody Map<String, Integer> body) {
         Integer particiones = body != null ? body.get("particiones") : null;
         if (particiones == null) {
@@ -89,8 +89,8 @@ public class KafkaAdminController {
      */
     @DeleteMapping("/topics/{nombreTopico}")
     public ResponseEntity<MensajeResponse> eliminarTopico(
-            @PathVariable String nombreTopico,
-            @RequestParam(defaultValue = "false") boolean force) {
+            @PathVariable("nombreTopico") String nombreTopico,
+            @RequestParam(name = "force", defaultValue = "false") boolean force) {
         return ResponseEntity.ok(adminService.eliminarTopico(nombreTopico, force));
     }
 
