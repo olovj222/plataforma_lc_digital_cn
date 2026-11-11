@@ -12,7 +12,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
+
 public interface AsistenciaRepository extends JpaRepository<Asistencia, Long>{
+    
+    
     
     @Query("SELECT a FROM Asistencia a JOIN Clase c ON a.id_clase = c.id WHERE c.cursoId = :idCurso")
     List<Asistencia> buscarPorCurso(@Param("idCurso") long idCurso);

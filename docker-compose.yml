@@ -5,6 +5,7 @@ version: "3.9"
 # Levanta: 6 Bases de Datos MySQL + Eureka + Admin
 # + API Gateway + 6 Microservicios
 # + RabbitMQ Cluster (2 nodos con failover)
+# + Kafka Cluster (3 Brokers KRaft) + Admin Kafka
 # =========================================================
 
 services:
@@ -150,8 +151,8 @@ services:
     hostname: rabbitmq-1
     restart: unless-stopped
     ports:
-      - "5672:5672"   # AMQP (nodo primario, mismos puertos que antes)
-      - "15672:15672" # Management UI nodo 1
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin123
@@ -168,8 +169,8 @@ services:
     hostname: rabbitmq-2
     restart: unless-stopped
     ports:
-      - "5673:5672"   # AMQP (nodo secundario, puerto distinto en host)
-      - "15673:15672" # Management UI nodo 2
+      - "5673:5672"
+      - "15673:15672"
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin123
@@ -565,7 +566,10 @@ volumes:
   mysql_anotaciones_data:
   rabbitmq_data_1:
   rabbitmq_data_2:
-
   kafka_data_1:
   kafka_data_2:
+<<<<<<< HEAD
   kafka_data_3:
+=======
+  kafka_data_3:
+>>>>>>> b9f8ee611ae95283a2f5b490cf3532e41b4b40d1

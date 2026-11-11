@@ -61,4 +61,3 @@ Acceder a `http://localhost:5173`
 |---------|------------|-----|
 | admin1 | admin123 | ADMIN |
 | profesor1 | profesor123 | PROFESOR |
-
