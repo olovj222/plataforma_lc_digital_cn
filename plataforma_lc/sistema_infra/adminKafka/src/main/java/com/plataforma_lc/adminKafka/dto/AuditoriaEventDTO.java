@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * DTO para eventos de auditoría del sistema.
  * Registra acciones realizadas por usuarios en los distintos microservicios.
  */
 @Data

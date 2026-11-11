@@ -15,7 +15,8 @@ import java.util.Map;
 
 /**
  * Controlador REST delgado para administración de tópicos y clúster Kafka.
- * Toda la lógica de negocio y llamadas a AdminClient delegan en {@link KafkaAdminService}.
+ * Toda la lógica de negocio y llamadas a AdminClient delegan en
+ * {@link KafkaAdminService}.
  */
 @Slf4j
 @RestController
@@ -49,7 +50,8 @@ public class KafkaAdminController {
     }
 
     /**
-     * Inspecciona a fondo un tópico existente (particiones, réplicas, ISR, configuraciones).
+     * Inspecciona a fondo un tópico existente (particiones, réplicas, ISR,
+     * configuraciones).
      * GET /api/kafka/admin/topics/{nombreTopico}
      */
     @GetMapping("/topics/{nombreTopico}")
@@ -58,7 +60,8 @@ public class KafkaAdminController {
     }
 
     /**
-     * Modifica dinámicamente configuraciones de un tópico con incrementalAlterConfigs (SET).
+     * Modifica dinámicamente configuraciones de un tópico con
+     * incrementalAlterConfigs (SET).
      * PUT /api/kafka/admin/topics/{nombreTopico}/config
      */
     @PutMapping("/topics/{nombreTopico}/config")
@@ -78,7 +81,8 @@ public class KafkaAdminController {
             @RequestBody Map<String, Integer> body) {
         Integer particiones = body != null ? body.get("particiones") : null;
         if (particiones == null) {
-            throw new IllegalArgumentException("El cuerpo debe contener el campo 'particiones' con un valor entero positivo");
+            throw new IllegalArgumentException(
+                    "El cuerpo debe contener el campo 'particiones' con un valor entero positivo");
         }
         return ResponseEntity.ok(adminService.aumentarParticiones(nombreTopico, particiones));
     }
@@ -100,7 +104,9 @@ public class KafkaAdminController {
 
     /**
      * Alias retrocompatible para listar consumer groups.
-     * @deprecated Usar {@link KafkaConsumerGroupController#listarConsumerGroups()} en /api/kafka/admin/consumer-groups.
+     * 
+     * @deprecated Usar {@link KafkaConsumerGroupController#listarConsumerGroups()}
+     *             en /api/kafka/admin/consumer-groups.
      */
     @Deprecated
     @GetMapping("/topics/consumer-groups")
@@ -113,7 +119,8 @@ public class KafkaAdminController {
     // ========================================================================================
 
     /**
-     * Retorna información del clúster Kafka (clusterId, controlador, lista de brokers).
+     * Retorna información del clúster Kafka (clusterId, controlador, lista de
+     * brokers).
      * GET /api/kafka/admin/cluster
      */
     @GetMapping("/cluster")

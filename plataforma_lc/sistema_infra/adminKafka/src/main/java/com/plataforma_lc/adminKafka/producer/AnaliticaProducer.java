@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 /**
  * Productor Kafka para el stream de analítica de asistencia.
- * Publica mensajes al tópico {@link KafkaTopics#ASISTENCIA_ANALITICA_STREAM} con acks=all.
- * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
+ * Publica mensajes al tópico {@link KafkaTopics#ASISTENCIA_ANALITICA_STREAM}
+ * con acks=all.
+ * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o
+ * errores.
  */
 @Slf4j
 @Service
@@ -36,15 +38,16 @@ public class AnaliticaProducer {
         kafkaTemplate.send(TOPIC, key, dto)
                 .whenComplete((result, ex) -> {
                     if (ex == null) {
-                        log.info("[ANALITICA-PRODUCER] ✅ Stream publicado exitosamente -> topic={}, partition={}, offset={}",
+                        log.info(
+                                "[ANALITICA-PRODUCER] ✅ Stream publicado exitosamente -> topic={}, partition={}, offset={}",
                                 result.getRecordMetadata().topic(),
                                 result.getRecordMetadata().partition(),
                                 result.getRecordMetadata().offset());
                     } else {
-                        log.error("[ANALITICA-PRODUCER] ❌ Error al publicar stream de analítica: cursoId={}, estudianteId={} -> {}",
+                        log.error(
+                                "[ANALITICA-PRODUCER] ❌ Error al publicar stream de analítica: cursoId={}, estudianteId={} -> {}",
                                 dto.getCursoId(), dto.getEstudianteId(), ex.getMessage(), ex);
                     }
                 });
     }
 }
-

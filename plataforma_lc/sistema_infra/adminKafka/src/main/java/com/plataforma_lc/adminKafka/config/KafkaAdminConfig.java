@@ -33,8 +33,7 @@ public class KafkaAdminConfig {
     @Bean
     public KafkaAdmin kafkaAdmin() {
         return new KafkaAdmin(Map.of(
-                AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers
-        ));
+                AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers));
     }
 
     @Bean
@@ -42,12 +41,12 @@ public class KafkaAdminConfig {
         return AdminClient.create(Map.of(
                 AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
                 AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, "5000",
-                AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "10000"
-        ));
+                AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, "10000"));
     }
 
     /**
-     * Factoría y KafkaTemplate principal para publicación de DTOs serializados a JSON.
+     * Factoría y KafkaTemplate principal para publicación de DTOs serializados a
+     * JSON.
      */
     @Bean
     @Primary
@@ -71,7 +70,8 @@ public class KafkaAdminConfig {
     }
 
     /**
-     * Factoría y KafkaTemplate de byte[] para publicar los payloads originales sin re-serializar
+     * Factoría y KafkaTemplate de byte[] para publicar los payloads originales sin
+     * re-serializar
      * en caso de mensajes corruptos dirigidos a tópicos DLT.
      */
     @Bean

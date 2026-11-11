@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 /**
  * Productor Kafka para eventos de alertas críticas.
- * Publica mensajes al tópico {@link KafkaTopics#PLATAFORMA_ALERTAS_CRITICAS} con acks=all.
- * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
+ * Publica mensajes al tópico {@link KafkaTopics#PLATAFORMA_ALERTAS_CRITICAS}
+ * con acks=all.
+ * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o
+ * errores.
  */
 @Slf4j
 @Service
@@ -36,7 +38,8 @@ public class AlertaProducer {
         kafkaTemplate.send(TOPIC, key, evento)
                 .whenComplete((result, ex) -> {
                     if (ex == null) {
-                        log.info("[ALERTA-PRODUCER] ✅ Alerta publicada exitosamente -> topic={}, partition={}, offset={}",
+                        log.info(
+                                "[ALERTA-PRODUCER] ✅ Alerta publicada exitosamente -> topic={}, partition={}, offset={}",
                                 result.getRecordMetadata().topic(),
                                 result.getRecordMetadata().partition(),
                                 result.getRecordMetadata().offset());
@@ -47,4 +50,3 @@ public class AlertaProducer {
                 });
     }
 }
-

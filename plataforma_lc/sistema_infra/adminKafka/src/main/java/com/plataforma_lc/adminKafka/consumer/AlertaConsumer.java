@@ -11,13 +11,16 @@ import org.springframework.stereotype.Service;
 
 /**
  * Consumidor Kafka para alertas críticas de la plataforma.
- * Escucha el tópico {@link KafkaTopics#PLATAFORMA_ALERTAS_CRITICAS} con el grupo
+ * Escucha el tópico {@link KafkaTopics#PLATAFORMA_ALERTAS_CRITICAS} con el
+ * grupo
  * "plataforma-alertas-group".
  * <p>
  * Escalabilidad horizontal:
- * Permite hasta 3 consumidores en el grupo "plataforma-alertas-group" para balancear
+ * Permite hasta 3 consumidores en el grupo "plataforma-alertas-group" para
+ * balancear
  * las 3 particiones asignadas al tópico.
- * Las excepciones se delegan al DefaultErrorHandler sin bloques try/catch que las oculten.
+ * Las excepciones se delegan al DefaultErrorHandler sin bloques try/catch que
+ * las oculten.
  */
 @Slf4j
 @Service
@@ -26,11 +29,7 @@ public class AlertaConsumer {
 
     private final AlertaService alertaService;
 
-    @KafkaListener(
-            topics = KafkaTopics.PLATAFORMA_ALERTAS_CRITICAS,
-            groupId = "plataforma-alertas-group",
-            concurrency = "${app.kafka.consumer.concurrency:1}"
-    )
+    @KafkaListener(topics = KafkaTopics.PLATAFORMA_ALERTAS_CRITICAS, groupId = "plataforma-alertas-group", concurrency = "${app.kafka.consumer.concurrency:1}")
     public void consumir(ConsumerRecord<String, AlertaEventDTO> record) {
         log.info("[ALERTA-CONSUMER] Mensaje recibido -> topic={}, partition={}, offset={}, key={}",
                 record.topic(), record.partition(), record.offset(), record.key());
