@@ -1,287 +1,123 @@
 package com.plataforma_lc.adminKafka.controller;
 
+import com.plataforma_lc.adminKafka.dto.KafkaResponses.*;
 import com.plataforma_lc.adminKafka.dto.TopicRequestDTO;
+import com.plataforma_lc.adminKafka.service.KafkaAdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.Node;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.TopicPartitionInfo;
-import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Controlador REST para la administración de tópicos y consumer groups de Kafka.
- * Proporciona endpoints para listar, crear, inspeccionar y eliminar tópicos,
- * así como consultar consumer groups activos y sus offsets.
+ * Controlador REST delgado para administración de tópicos y clúster Kafka.
+ * Toda la lógica de negocio y llamadas a AdminClient delegan en {@link KafkaAdminService}.
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/kafka/admin/topics")
+@RequestMapping("/api/kafka/admin")
 @RequiredArgsConstructor
 public class KafkaAdminController {
 
-    private final AdminClient adminClient;
+    private final KafkaAdminService adminService;
 
     // ========================================================================================
-    // LISTAR TÓPICOS
+    // TÓPICOS
     // ========================================================================================
 
     /**
-     * Lista todos los tópicos del clúster Kafka (excluyendo los internos).
+     * Lista todos los tópicos del clúster (excluyendo internos).
      * GET /api/kafka/admin/topics
      */
-    @GetMapping
-    public ResponseEntity<Map<String, Object>> listarTopicos() {
-        try {
-            Set<String> topicos = adminClient.listTopics(new ListTopicsOptions().listInternal(false))
-                    .names()
-                    .get();
-
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("totalTopicos", topicos.size());
-            response.put("topicos", topicos.stream().sorted().collect(Collectors.toList()));
-
-            log.info("[KAFKA-ADMIN] Tópicos listados exitosamente: {} tópicos encontrados", topicos.size());
-            return ResponseEntity.ok(response);
-
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] Error al listar tópicos: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al listar tópicos: " + e.getMessage()));
-        }
+    @GetMapping("/topics")
+    public ResponseEntity<ListadoTopicosResponse> listarTopicos() {
+        return ResponseEntity.ok(adminService.listarTopicos());
     }
 
-    // ========================================================================================
-    // CREAR TÓPICO
-    // ========================================================================================
-
     /**
-     * Crea un nuevo tópico con parámetros dinámicos.
+     * Crea un nuevo tópico con parámetros dinámicos validados.
      * POST /api/kafka/admin/topics
      */
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> crearTopico(@Valid @RequestBody TopicRequestDTO request) {
-        try {
-            NewTopic nuevoTopico = new NewTopic(
-                    request.getNombre(),
-                    request.getParticiones(),
-                    (short) request.getFactorReplicacion()
-            );
-
-            // Configuraciones adicionales del tópico
-            Map<String, String> configs = new HashMap<>();
-            configs.put("retention.ms", String.valueOf(request.getRetentionMs()));
-            configs.put("cleanup.policy", request.getCleanupPolicy());
-            configs.put("min.insync.replicas", "2");
-            nuevoTopico.configs(configs);
-
-            adminClient.createTopics(Collections.singletonList(nuevoTopico)).all().get();
-
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("mensaje", "Tópico creado exitosamente");
-            response.put("nombre", request.getNombre());
-            response.put("particiones", request.getParticiones());
-            response.put("factorReplicacion", request.getFactorReplicacion());
-            response.put("retentionMs", request.getRetentionMs());
-            response.put("cleanupPolicy", request.getCleanupPolicy());
-
-            log.info("[KAFKA-ADMIN] ✅ Tópico creado: nombre={}, particiones={}, réplicas={}",
-                    request.getNombre(), request.getParticiones(), request.getFactorReplicacion());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] ❌ Error al crear tópico '{}': {}", request.getNombre(), e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al crear tópico: " + e.getMessage()));
-        }
+    @PostMapping("/topics")
+    public ResponseEntity<MensajeResponse> crearTopico(@Valid @RequestBody TopicRequestDTO request) {
+        MensajeResponse respuesta = adminService.crearTopico(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
-    // ========================================================================================
-    // INSPECCIONAR TÓPICO (detalles: particiones, réplicas, ISR, configuraciones)
-    // ========================================================================================
-
     /**
-     * Obtiene los detalles completos de un tópico: particiones, réplicas, ISR y configuraciones.
+     * Inspecciona a fondo un tópico existente (particiones, réplicas, ISR, configuraciones).
      * GET /api/kafka/admin/topics/{nombreTopico}
      */
-    @GetMapping("/{nombreTopico}")
-    public ResponseEntity<Map<String, Object>> inspeccionarTopico(@PathVariable String nombreTopico) {
-        try {
-            // Obtener descripción del tópico
-            TopicDescription descripcion = adminClient
-                    .describeTopics(Collections.singletonList(nombreTopico))
-                    .topicNameValues()
-                    .get(nombreTopico)
-                    .get();
-
-            // Obtener configuraciones del tópico
-            ConfigResource recurso = new ConfigResource(ConfigResource.Type.TOPIC, nombreTopico);
-            Config config = adminClient
-                    .describeConfigs(Collections.singletonList(recurso))
-                    .all()
-                    .get()
-                    .get(recurso);
-
-            // Construir respuesta detallada
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("nombre", descripcion.name());
-            response.put("topicId", descripcion.topicId().toString());
-            response.put("esInterno", descripcion.isInternal());
-            response.put("totalParticiones", descripcion.partitions().size());
-
-            // Detalle por partición
-            List<Map<String, Object>> particiones = new ArrayList<>();
-            for (TopicPartitionInfo partInfo : descripcion.partitions()) {
-                Map<String, Object> partData = new LinkedHashMap<>();
-                partData.put("particion", partInfo.partition());
-                partData.put("lider", formatNode(partInfo.leader()));
-                partData.put("replicas", partInfo.replicas().stream()
-                        .map(this::formatNode)
-                        .collect(Collectors.toList()));
-                partData.put("isr", partInfo.isr().stream()
-                        .map(this::formatNode)
-                        .collect(Collectors.toList()));
-                partData.put("replicasEnSync", partInfo.isr().size());
-                particiones.add(partData);
-            }
-            response.put("particiones", particiones);
-
-            // Configuraciones del tópico
-            Map<String, String> configuraciones = new LinkedHashMap<>();
-            for (ConfigEntry entry : config.entries()) {
-                if (!entry.isDefault()) {
-                    configuraciones.put(entry.name(), entry.value());
-                }
-            }
-            response.put("configuracionesPersonalizadas", configuraciones);
-
-            log.info("[KAFKA-ADMIN] Tópico inspeccionado: {}", nombreTopico);
-            return ResponseEntity.ok(response);
-
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] Error al inspeccionar tópico '{}': {}", nombreTopico, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Tópico no encontrado o error al inspeccionar: " + e.getMessage()));
-        }
+    @GetMapping("/topics/{nombreTopico}")
+    public ResponseEntity<TopicoDetalleResponse> inspeccionarTopico(@PathVariable String nombreTopico) {
+        return ResponseEntity.ok(adminService.inspeccionarTopico(nombreTopico));
     }
 
-    // ========================================================================================
-    // ELIMINAR TÓPICO
-    // ========================================================================================
+    /**
+     * Modifica dinámicamente configuraciones de un tópico con incrementalAlterConfigs (SET).
+     * PUT /api/kafka/admin/topics/{nombreTopico}/config
+     */
+    @PutMapping("/topics/{nombreTopico}/config")
+    public ResponseEntity<MensajeResponse> modificarConfiguracion(
+            @PathVariable String nombreTopico,
+            @RequestBody Map<String, String> configs) {
+        return ResponseEntity.ok(adminService.modificarConfiguracion(nombreTopico, configs));
+    }
 
     /**
-     * Elimina un tópico del clúster Kafka.
+     * Incrementa el número de particiones de un tópico (nunca permite reducirlas).
+     * PUT /api/kafka/admin/topics/{nombreTopico}/particiones
+     */
+    @PutMapping("/topics/{nombreTopico}/particiones")
+    public ResponseEntity<MensajeResponse> aumentarParticiones(
+            @PathVariable String nombreTopico,
+            @RequestBody Map<String, Integer> body) {
+        Integer particiones = body != null ? body.get("particiones") : null;
+        if (particiones == null) {
+            throw new IllegalArgumentException("El cuerpo debe contener el campo 'particiones' con un valor entero positivo");
+        }
+        return ResponseEntity.ok(adminService.aumentarParticiones(nombreTopico, particiones));
+    }
+
+    /**
+     * Elimina un tópico. Si es un tópico del sistema protegido, exige ?force=true.
      * DELETE /api/kafka/admin/topics/{nombreTopico}
      */
-    @DeleteMapping("/{nombreTopico}")
-    public ResponseEntity<Map<String, Object>> eliminarTopico(@PathVariable String nombreTopico) {
-        try {
-            adminClient.deleteTopics(Collections.singletonList(nombreTopico)).all().get();
-
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("mensaje", "Tópico eliminado exitosamente");
-            response.put("nombre", nombreTopico);
-
-            log.info("[KAFKA-ADMIN] ✅ Tópico eliminado: {}", nombreTopico);
-            return ResponseEntity.ok(response);
-
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] ❌ Error al eliminar tópico '{}': {}", nombreTopico, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al eliminar tópico: " + e.getMessage()));
-        }
+    @DeleteMapping("/topics/{nombreTopico}")
+    public ResponseEntity<MensajeResponse> eliminarTopico(
+            @PathVariable String nombreTopico,
+            @RequestParam(defaultValue = "false") boolean force) {
+        return ResponseEntity.ok(adminService.eliminarTopico(nombreTopico, force));
     }
 
     // ========================================================================================
-    // LISTAR CONSUMER GROUPS ACTIVOS Y SUS OFFSETS
+    // ALIAS DEPRECATED PARA COMPATIBILIDAD RETROACTIVA
     // ========================================================================================
 
     /**
-     * Lista todos los consumer groups activos del clúster con sus offsets por partición.
-     * GET /api/kafka/admin/topics/consumer-groups
+     * Alias retrocompatible para listar consumer groups.
+     * @deprecated Usar {@link KafkaConsumerGroupController#listarConsumerGroups()} en /api/kafka/admin/consumer-groups.
      */
-    @GetMapping("/consumer-groups")
-    public ResponseEntity<Map<String, Object>> listarConsumerGroups() {
-        try {
-            // Obtener todos los consumer groups
-            Collection<ConsumerGroupListing> grupos = adminClient
-                    .listConsumerGroups()
-                    .all()
-                    .get();
-
-            List<Map<String, Object>> gruposDetalle = new ArrayList<>();
-
-            for (ConsumerGroupListing grupo : grupos) {
-                Map<String, Object> grupoData = new LinkedHashMap<>();
-                grupoData.put("groupId", grupo.groupId());
-                grupoData.put("estado", grupo.state().isPresent() ? grupo.state().get().toString() : "UNKNOWN");
-                grupoData.put("esSimple", grupo.isSimpleConsumerGroup());
-
-                // Obtener offsets del consumer group
-                try {
-                    Map<TopicPartition, OffsetAndMetadata> offsets = adminClient
-                            .listConsumerGroupOffsets(grupo.groupId())
-                            .partitionsToOffsetAndMetadata()
-                            .get();
-
-                    List<Map<String, Object>> offsetsDetalle = new ArrayList<>();
-                    for (Map.Entry<TopicPartition, OffsetAndMetadata> entry : offsets.entrySet()) {
-                        Map<String, Object> offsetData = new LinkedHashMap<>();
-                        offsetData.put("topic", entry.getKey().topic());
-                        offsetData.put("particion", entry.getKey().partition());
-                        offsetData.put("offset", entry.getValue().offset());
-                        if (entry.getValue().metadata() != null && !entry.getValue().metadata().isEmpty()) {
-                            offsetData.put("metadata", entry.getValue().metadata());
-                        }
-                        offsetsDetalle.add(offsetData);
-                    }
-                    grupoData.put("offsets", offsetsDetalle);
-                } catch (Exception e) {
-                    grupoData.put("offsets", "Error al obtener offsets: " + e.getMessage());
-                }
-
-                gruposDetalle.add(grupoData);
-            }
-
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("totalConsumerGroups", gruposDetalle.size());
-            response.put("consumerGroups", gruposDetalle);
-
-            log.info("[KAFKA-ADMIN] Consumer groups listados: {} grupos encontrados", gruposDetalle.size());
-            return ResponseEntity.ok(response);
-
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            log.error("[KAFKA-ADMIN] Error al listar consumer groups: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al listar consumer groups: " + e.getMessage()));
-        }
+    @Deprecated
+    @GetMapping("/topics/consumer-groups")
+    public ResponseEntity<List<ConsumerGroupItemResponse>> listarConsumerGroupsAlias() {
+        return ResponseEntity.ok(adminService.listarConsumerGroups());
     }
 
     // ========================================================================================
-    // UTILIDADES PRIVADAS
+    // CLÚSTER
     // ========================================================================================
 
     /**
-     * Formatea la información de un nodo Kafka para la respuesta JSON.
+     * Retorna información del clúster Kafka (clusterId, controlador, lista de brokers).
+     * GET /api/kafka/admin/cluster
      */
-    private String formatNode(Node node) {
-        if (node == null) return "N/A";
-        return String.format("broker-%d (%s:%d)", node.id(), node.host(), node.port());
+    @GetMapping("/cluster")
+    public ResponseEntity<ClusterInfoResponse> obtenerInfoCluster() {
+        return ResponseEntity.ok(adminService.obtenerInfoCluster());
     }
 }
-
