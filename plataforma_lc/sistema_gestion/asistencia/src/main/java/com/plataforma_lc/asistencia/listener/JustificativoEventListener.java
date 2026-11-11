@@ -1,8 +1,12 @@
 package com.plataforma_lc.asistencia.listener;
 
+import com.plataforma_lc.asistencia.dto.AnaliticaStreamDTO;
 import com.plataforma_lc.asistencia.dto.JustificativoEventDTO;
 import com.plataforma_lc.asistencia.entities.Asistencia;
+import com.plataforma_lc.asistencia.entities.Clase;
+import com.plataforma_lc.asistencia.publisher.AnaliticaStreamPublisher;
 import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
+import com.plataforma_lc.asistencia.repository.ClaseRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
@@ -12,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -23,6 +29,12 @@ public class JustificativoEventListener {
 
     @Autowired
     private AsistenciaRepository asistenciaRepository;
+
+    @Autowired
+    private ClaseRepository claseRepository;
+
+    @Autowired
+    private AnaliticaStreamPublisher analiticaStreamPublisher;
 
     @Value("${rabbitmq.simulacion.fallos.habilitada:false}")
     private boolean simulacionFallosHabilitada;
@@ -64,6 +76,9 @@ public class JustificativoEventListener {
                             log.info("Asistencia ID {} actualizada exitosamente a JUSTIFIED para la fecha {}",
                                     asistencia.getId(), fechaDTO);
                             actualizada = true;
+
+                            // MySQL ya quedó actualizado: publicar la métrica al stream de analítica (Kafka)
+                            publicarMetricaKafka(asistencia, fechaDTO);
                         }
                     }
                 }
@@ -79,6 +94,36 @@ public class JustificativoEventListener {
         } catch (Exception e) {
             log.error("Error al procesar evento de justificativo: {}. Redirigiendo a DLQ.", e.getMessage());
             throw new AmqpRejectAndDontRequeueException(e);
+        }
+    }
+
+    /**
+     * Publica en Kafka la métrica de la asistencia recién actualizada.
+     * Nunca lanza excepciones: la actualización en MySQL ya se confirmó y un fallo de
+     * Kafka no debe enviar el mensaje de RabbitMQ a la DLQ.
+     */
+    private void publicarMetricaKafka(Asistencia asistencia, String fechaIso) {
+        try {
+            Long cursoId = claseRepository.findById(asistencia.getId_clase())
+                    .map(Clase::getCursoId)
+                    .orElse(null);
+
+            if (cursoId == null) {
+                log.warn("Métrica no publicada en Kafka: la asistencia {} no tiene curso asociado (clase {})",
+                        asistencia.getId(), asistencia.getId_clase());
+                return;
+            }
+
+            analiticaStreamPublisher.publicar(AnaliticaStreamDTO.builder()
+                    .cursoId(cursoId)
+                    .estudianteId(asistencia.getId_estudiante())
+                    .fecha(LocalDate.parse(fechaIso))
+                    .estado(asistencia.getEstado())
+                    .timestamp(LocalDateTime.now())
+                    .build());
+        } catch (Exception e) {
+            log.error("No se pudo preparar la métrica de Kafka para la asistencia {}: {}",
+                    asistencia.getId(), e.getMessage());
         }
     }
 }

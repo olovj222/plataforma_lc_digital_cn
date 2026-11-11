@@ -8,6 +8,7 @@ import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
 import com.plataforma_lc.asistencia.entities.Asistencia;
 import com.plataforma_lc.asistencia.entities.Clase;
 import com.plataforma_lc.asistencia.entities.EstudianteResponse;
+import com.plataforma_lc.asistencia.publisher.AsistenciaPublisher;
 import com.plataforma_lc.asistencia.repository.ClaseRepository;
 import com.plataforma_lc.asistencia.service.EstudianteClientService;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ class AsistenciaRestControllerTest {
     @Mock private AsistenciaRepository asistenciaRepository;
     @Mock private ClaseRepository claseRepository;
     @Mock private EstudianteClientService estudianteClientService;
+    @Mock private AsistenciaPublisher asistenciaPublisher;
 
     @InjectMocks private AsistenciaRestController controller;
 
