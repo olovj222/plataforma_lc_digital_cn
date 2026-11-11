@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminKafka.consumer;
 
+import com.plataforma_lc.adminKafka.config.KafkaTopics;
 import com.plataforma_lc.adminKafka.dto.AnaliticaStreamDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Consumidor Kafka para el stream de analítica de asistencia.
- * Escucha el tópico "asistencia.analitica.stream" con el consumer group
+ * Escucha el tópico {@link KafkaTopics#ASISTENCIA_ANALITICA_STREAM} con el consumer group
  * "plataforma-analitica-group". Incluye manejo explícito de excepciones
  * para prevenir la detención del consumidor ante mensajes defectuosos.
  */
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AnaliticaConsumer {
 
     @KafkaListener(
-            topics = "asistencia.analitica.stream",
+            topics = KafkaTopics.ASISTENCIA_ANALITICA_STREAM,
             groupId = "plataforma-analitica-group",
             properties = {
                     "spring.json.value.default.type=com.plataforma_lc.adminKafka.dto.AnaliticaStreamDTO"

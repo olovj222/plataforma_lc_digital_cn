@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminKafka.producer;
 
+import com.plataforma_lc.adminKafka.config.KafkaTopics;
 import com.plataforma_lc.adminKafka.dto.AnaliticaStreamDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Productor Kafka para el stream de analítica de asistencia.
- * Publica mensajes al tópico "asistencia.analitica.stream" con acks=all.
+ * Publica mensajes al tópico {@link KafkaTopics#ASISTENCIA_ANALITICA_STREAM} con acks=all.
  * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
  */
 @Slf4j
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AnaliticaProducer {
 
-    private static final String TOPIC = "asistencia.analitica.stream";
+    private static final String TOPIC = KafkaTopics.ASISTENCIA_ANALITICA_STREAM;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 

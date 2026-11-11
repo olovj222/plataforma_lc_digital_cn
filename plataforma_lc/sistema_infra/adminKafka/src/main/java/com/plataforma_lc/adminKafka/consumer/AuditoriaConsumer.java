@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminKafka.consumer;
 
+import com.plataforma_lc.adminKafka.config.KafkaTopics;
 import com.plataforma_lc.adminKafka.dto.AuditoriaEventDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Consumidor Kafka para eventos de auditoría.
- * Escucha el tópico "plataforma.auditoria.eventos" con el consumer group
+ * Escucha el tópico {@link KafkaTopics#PLATAFORMA_AUDITORIA_EVENTOS} con el consumer group
  * "plataforma-auditoria-group". Incluye manejo explícito de excepciones
  * para prevenir la detención del consumidor ante mensajes defectuosos.
  */
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class AuditoriaConsumer {
 
     @KafkaListener(
-            topics = "plataforma.auditoria.eventos",
+            topics = KafkaTopics.PLATAFORMA_AUDITORIA_EVENTOS,
             groupId = "plataforma-auditoria-group",
             properties = {
                     "spring.json.value.default.type=com.plataforma_lc.adminKafka.dto.AuditoriaEventDTO"

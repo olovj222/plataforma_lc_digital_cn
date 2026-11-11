@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminKafka.producer;
 
+import com.plataforma_lc.adminKafka.config.KafkaTopics;
 import com.plataforma_lc.adminKafka.dto.AuditoriaEventDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Productor Kafka para eventos de auditoría.
- * Publica mensajes al tópico "plataforma.auditoria.eventos" con acks=all.
+ * Publica mensajes al tópico {@link KafkaTopics#PLATAFORMA_AUDITORIA_EVENTOS} con acks=all.
  * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
  */
 @Slf4j
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuditoriaProducer {
 
-    private static final String TOPIC = "plataforma.auditoria.eventos";
+    private static final String TOPIC = KafkaTopics.PLATAFORMA_AUDITORIA_EVENTOS;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 

@@ -1,5 +1,6 @@
 package com.plataforma_lc.adminKafka.producer;
 
+import com.plataforma_lc.adminKafka.config.KafkaTopics;
 import com.plataforma_lc.adminKafka.dto.AlertaEventDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Productor Kafka para eventos de alertas críticas.
- * Publica mensajes al tópico "plataforma.alertas.criticas" con acks=all.
+ * Publica mensajes al tópico {@link KafkaTopics#PLATAFORMA_ALERTAS_CRITICAS} con acks=all.
  * Utiliza callbacks asíncronos para registrar éxito (partición/offset) o errores.
  */
 @Slf4j
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AlertaProducer {
 
-    private static final String TOPIC = "plataforma.alertas.criticas";
+    private static final String TOPIC = KafkaTopics.PLATAFORMA_ALERTAS_CRITICAS;
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
