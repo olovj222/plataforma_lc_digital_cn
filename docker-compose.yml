@@ -568,8 +568,4 @@ volumes:
   rabbitmq_data_2:
   kafka_data_1:
   kafka_data_2:
-<<<<<<< HEAD
   kafka_data_3:
-=======
-  kafka_data_3:
->>>>>>> b9f8ee611ae95283a2f5b490cf3532e41b4b40d1
