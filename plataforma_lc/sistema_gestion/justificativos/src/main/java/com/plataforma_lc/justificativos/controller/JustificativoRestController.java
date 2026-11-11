@@ -1,8 +1,10 @@
 package com.plataforma_lc.justificativos.controller;
 
 import com.plataforma_lc.justificativos.entities.Justificativo;
+import com.plataforma_lc.justificativos.dto.DetallesAuditDto;
 import com.plataforma_lc.justificativos.entities.EstadoJustificativo;
 import com.plataforma_lc.justificativos.repository.JustificativoRepository;
+import com.plataforma_lc.justificativos.publisher.AuditKafkaProducer;
 import com.plataforma_lc.justificativos.publisher.JustificativoPublisher;
 import com.plataforma_lc.justificativos.exception.BusinessRuleException;
 import jakarta.validation.Valid;
@@ -24,6 +26,9 @@ public class JustificativoRestController {
     @Autowired
     private JustificativoPublisher justificativoPublisher;
 
+    @Autowired
+    private AuditKafkaProducer auditKafkaProducer;
+
     @PostMapping
     public ResponseEntity<Justificativo> crear(@Valid @RequestBody Justificativo input,
                                                 @RequestHeader("X-User-Id") String userId,
@@ -36,6 +41,14 @@ public class JustificativoRestController {
 
         // Notificar creación del justificativo a RabbitMQ mediante el publisher
         justificativoPublisher.publicarEventoJustificativo(guardado);
+
+        DetallesAuditDto detalles = new DetallesAuditDto(
+            guardado.getId(),
+            guardado.getEstudianteId(),
+            null,
+            EstadoJustificativo.PENDIENTE.name()
+        );
+        auditKafkaProducer.emitirEventoAuditoria("CREACION_JUSTIFICATIVO", userId, detalles);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
@@ -52,7 +65,7 @@ public class JustificativoRestController {
                                                           @RequestHeader("X-User-Roles") String roles) {
         requireAnyRole(roles, "PROFESOR", "ADMIN");
         return ResponseEntity.ok(repository.findByCursoId(cursoId));
-    }
+    }   
 
     @GetMapping("/pendientes")
     public ResponseEntity<List<Justificativo>> pendientes(@RequestHeader("X-User-Roles") String roles) {
@@ -78,18 +91,34 @@ public class JustificativoRestController {
 
     // --- helpers ---
 
-    private Justificativo resolver(Long id, EstadoJustificativo estado, String resueltoPor) {
+    private Justificativo resolver(Long id, EstadoJustificativo estadoNuevo, String resueltoPor) {
         Justificativo j = repository.findById(id)
             .orElseThrow(() -> new BusinessRuleException(
                 "Justificativo con id " + id + " no encontrado", HttpStatus.NOT_FOUND.value()
             ));
-        j.setEstado(estado);
+
+        String estadoAnterior = j.getEstado() != null ? j.getEstado().name() : null;
+
+        j.setEstado(estadoNuevo);
         j.setResueltoPor(resueltoPor);
         j.setFechaResolucion(LocalDateTime.now());
         Justificativo resuelto = repository.save(j);
 
-        // Publicar evento de resolución (Aprobar/Rechazar) mediante el publisher
+        // 1. Sincronización a RabbitMQ
         justificativoPublisher.publicarEventoJustificativo(resuelto);
+
+        // 2. Auditoría a Kafka
+        String tipoAccion = estadoNuevo == EstadoJustificativo.APROBADO 
+            ? "APROBACION_JUSTIFICATIVO" 
+            : "RECHAZO_JUSTIFICATIVO";
+
+        DetallesAuditDto detalles = new DetallesAuditDto(
+            resuelto.getId(),
+            resuelto.getEstudianteId(),
+            estadoAnterior,
+            estadoNuevo.name()
+        );
+        auditKafkaProducer.emitirEventoAuditoria(tipoAccion, resueltoPor, detalles);
 
         return resuelto;
     }

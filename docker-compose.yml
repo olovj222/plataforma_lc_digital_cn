@@ -355,12 +355,17 @@ services:
       SPRING_RABBITMQ_USERNAME: admin
       SPRING_RABBITMQ_PASSWORD: admin123
       RABBITMQ_SIMULACION_FALLOS_HABILITADA: "true"
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
+      APP_KAFKA_TOPIC_AUDIT: audit-events-v1
+      APP_KAFKA_SERVICIO_ORIGEN: justificativos-service
     depends_on:
       mysql-justificativos:
         condition: service_healthy
       eureka-server:
         condition: service_started
       rabbitmq-1:
+        condition: service_started
+      kafka-1: # <-- Garantiza que Kafka haya iniciado antes que justificativos
         condition: service_started
     networks:
       - plataforma-net
@@ -531,136 +536,21 @@ services:
     networks:
       - plataforma-net
 
-  # ---------------- KAFKA CLUSTER (3 Brokers con KRaft) ----------------
-  kafka-1:
-    image: confluentinc/cp-kafka:7.5.3
-    container_name: kafka-1
-    hostname: kafka-1
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
     restart: unless-stopped
     ports:
-      - "9092:9092"
+      - "8040:8040"
     environment:
-      KAFKA_NODE_ID: 1
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093,EXTERNAL://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-1:29092,EXTERNAL://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_LOG_RETENTION_HOURS: 168
-    volumes:
-      - kafka_data_1:/var/lib/kafka/data
-    networks:
-      - plataforma-net
-
-  kafka-2:
-    image: confluentinc/cp-kafka:7.5.3
-    container_name: kafka-2
-    hostname: kafka-2
-    restart: unless-stopped
-    ports:
-      - "9093:9092"
-    environment:
-      KAFKA_NODE_ID: 2
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093,EXTERNAL://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:29092,EXTERNAL://localhost:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_LOG_RETENTION_HOURS: 168
-    volumes:
-      - kafka_data_2:/var/lib/kafka/data
+      KAFKA_CLUSTERS_0_NAME: plataforma-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
     depends_on:
       - kafka-1
+      - kafka-2
+      - kafka-3
     networks:
       - plataforma-net
-
-  kafka-3:
-    image: confluentinc/cp-kafka:7.5.3
-    container_name: kafka-3
-    hostname: kafka-3
-    restart: unless-stopped
-    ports:
-      - "9094:9092"
-    environment:
-      KAFKA_NODE_ID: 3
-      KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093,EXTERNAL://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-3:29092,EXTERNAL://localhost:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-      KAFKA_DEFAULT_REPLICATION_FACTOR: 3
-      KAFKA_MIN_INSYNC_REPLICAS: 2
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
-      KAFKA_LOG_RETENTION_HOURS: 168
-    volumes:
-      - kafka_data_3:/var/lib/kafka/data
-    depends_on:
-      - kafka-1
-    networks:
-      - plataforma-net
-
-  # ---------------- ADMIN KAFKA ----------------
-  admin-kafka:
-    build:
-      context: .
-      dockerfile: ./plataforma_lc/sistema_infra/adminKafka/Dockerfile.adminKafka
-    container_name: admin-kafka
-    restart: unless-stopped
-    ports:
-      - "8088:8088"
-    environment:
-      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-      KAFKA_BOOTSTRAP_SERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
-    depends_on:
-      eureka-server:
-        condition: service_started
-      kafka-1:
-        condition: service_started
-      kafka-2:
-        condition: service_started
-      kafka-3:
-        condition: service_started
-    networks:
-      - plataforma-net
-
-  # ---------------- FRONTEND ----------------
-  # frontend:
-  #   build:
-  #     context: ./frontend/plataforma_lc_frontend
-  #     dockerfile: Dockerfile.frontend
-  #   container_name: frontend
-  #   restart: unless-stopped
-  #   ports:
-  #     - "5173:80"
-  #   depends_on:
-  #     - api-gateway
-  #   networks:
-  #     - plataforma-net
 
 networks:
   plataforma-net:
@@ -675,10 +565,6 @@ volumes:
   mysql_anotaciones_data:
   rabbitmq_data_1:
   rabbitmq_data_2:
-
-  kafka_data_1:
-  kafka_data_2:
-  kafka_data_3:
 
   kafka_data_1:
   kafka_data_2:

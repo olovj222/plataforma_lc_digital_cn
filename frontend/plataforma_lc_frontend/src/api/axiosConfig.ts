@@ -4,8 +4,6 @@ import { msalInstance } from '../msalConfig'
 
 const BASE_URL = 'https://wbx8k2g5me.execute-api.us-east-1.amazonaws.com/'
 
-// Scopes mínimos solo para mantener la sesión renovable.
-// Si más adelante expones un scope propio de API en Entra ID, agrégalo aquí.
 const tokenRequest = {
   scopes: ['openid', 'profile'],
 }
@@ -20,7 +18,6 @@ const authInterceptor = async (config: InternalAxiosRequestConfig) => {
         ...tokenRequest,
         account,
       })
-      // Usamos el ID Token: es el mismo que ya usa App.tsx para leer los roles
       config.headers.Authorization = `Bearer ${response.idToken}`
     } catch (error) {
       if (error instanceof InteractionRequiredAuthError) {
