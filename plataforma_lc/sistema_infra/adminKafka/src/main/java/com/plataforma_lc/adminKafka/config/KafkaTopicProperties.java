@@ -31,3 +31,4 @@ public class KafkaTopicProperties {
      */
     private int minInsyncReplicas = 2;
 }
+

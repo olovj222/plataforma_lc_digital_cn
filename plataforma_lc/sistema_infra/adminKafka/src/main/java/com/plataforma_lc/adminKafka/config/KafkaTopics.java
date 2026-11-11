@@ -55,3 +55,4 @@ public final class KafkaTopics {
             PLATAFORMA_ALERTAS_CRITICAS_DLT
     );
 }
+

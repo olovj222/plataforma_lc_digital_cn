@@ -14,3 +14,4 @@ public class EventoInvalidoException extends RuntimeException {
         super(message, cause);
     }
 }
+

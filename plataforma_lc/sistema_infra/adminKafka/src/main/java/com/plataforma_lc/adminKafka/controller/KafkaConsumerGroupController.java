@@ -49,3 +49,4 @@ public class KafkaConsumerGroupController {
         return ResponseEntity.ok(adminService.eliminarConsumerGroup(groupId));
     }
 }
+

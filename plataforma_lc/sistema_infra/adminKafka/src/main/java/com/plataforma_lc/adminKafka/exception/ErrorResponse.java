@@ -22,3 +22,4 @@ public record ErrorResponse(
         this(LocalDateTime.now(), status, error, message, path, detallesValidacion);
     }
 }
+
