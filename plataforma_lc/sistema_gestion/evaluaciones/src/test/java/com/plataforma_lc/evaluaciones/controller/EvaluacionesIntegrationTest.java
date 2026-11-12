@@ -2,6 +2,7 @@ package com.plataforma_lc.evaluaciones.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plataforma_lc.evaluaciones.entities.Evaluaciones;
+import com.plataforma_lc.evaluaciones.publisher.EvaluacionPublisher;
 import com.plataforma_lc.evaluaciones.repository.evaluacionesRepository;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -40,6 +42,7 @@ import static org.hamcrest.Matchers.containsString;
     }
 )
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class EvaluacionesIntegrationTest {
 
     @Autowired
@@ -55,6 +58,8 @@ public class EvaluacionesIntegrationTest {
     private static MockWebServer mockBackEnd;
 
     private Evaluaciones evaluacion;
+    
+    private EvaluacionPublisher evaluacionPublisher;
 
     @BeforeAll
     static void setUp() throws IOException {

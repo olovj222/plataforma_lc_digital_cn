@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Pruebas End-to-End dinámicas vinculadas a Eureka Server.
  * * Ya no dependemos de puertos estáticos hardcodeados en el entorno local/Docker.
  */
+@Tag("e2e")
 @SpringBootTest(properties = {
     "spring.application.name=evaluaciones",
     "eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/" 

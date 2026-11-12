@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.plataforma_lc.asistencia.entities.Asistencia;
 import com.plataforma_lc.asistencia.entities.Clase;
 import com.plataforma_lc.asistencia.entities.EstudianteResponse;
+import com.plataforma_lc.asistencia.publisher.AsistenciaPublisher;
 import com.plataforma_lc.asistencia.repository.AsistenciaRepository;
 import com.plataforma_lc.asistencia.repository.ClaseRepository;
 import com.plataforma_lc.asistencia.service.EstudianteClientService;
@@ -31,6 +32,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.containsString;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,6 +45,8 @@ public class AsistenciaRestControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockitoBean
+    private AsistenciaPublisher asistenciaPublisher;
     // Aislamos la base de datos
     @MockitoBean
     private AsistenciaRepository asistenciaRepository;
@@ -52,6 +57,7 @@ public class AsistenciaRestControllerIntegrationTest {
     // Aislamos el cliente del microservicio para no hacer llamadas reales
     @MockitoBean
     private EstudianteClientService estudianteClientService;
+
 
     private Asistencia asistenciaInput;
     private Clase claseValida;
@@ -97,6 +103,7 @@ public class AsistenciaRestControllerIntegrationTest {
             .andExpect(jsonPath("$.estado").value("PRESENT"));
 
         verify(asistenciaRepository, times(1)).save(any(Asistencia.class));
+        verify(asistenciaPublisher).publicarEventoAsistencia(any(Asistencia.class));
     }
 
     @Test

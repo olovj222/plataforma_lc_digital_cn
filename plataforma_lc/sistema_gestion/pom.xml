@@ -18,6 +18,9 @@
         <module>justificativos</module>
         <module>anotaciones</module>
     </modules>
+    <properties>
+        <test.excludedGroups>e2e</test.excludedGroups>
+    </properties>
     <dependencies>
         <!-- Dependencias que quieras que hereden los hijos de businessdomain -->
         <dependency>
@@ -108,6 +111,13 @@
     </dependencies>
     <build>
 		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>${test.excludedGroups}</excludedGroups>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

@@ -18,6 +18,7 @@ import org.springframework.data.util.MethodInvocationRecorder.Recorded;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.server.MockWebSession;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -44,6 +45,7 @@ import static org.hamcrest.Matchers.containsString;
     }
 )
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class EstudianteRestControllerIntegrationTest {
 
     @Autowired
