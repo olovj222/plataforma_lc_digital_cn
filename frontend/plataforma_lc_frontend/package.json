@@ -8,7 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "test:cloud": "playwright test -c playwright.config.cloud.ts",
+    "test:cloud:headed": "playwright test -c playwright.config.cloud.ts --headed"
   },
   "dependencies": {
     "@azure/msal-browser": "^5.21.0",
