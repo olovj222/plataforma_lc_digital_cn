@@ -542,7 +542,7 @@ services:
     container_name: kafka-ui
     restart: unless-stopped
     ports:
-      - "8040:8040"
+      - "8040:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: plataforma-cluster
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
