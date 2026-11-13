@@ -33,11 +33,9 @@ test.describe.serial('Pruebas de Integración Cloud - AWS & Azure', () => {
     await passInput.fill(AZURE_PASS);
     await page.locator('input[type="submit"]').click();
 
-    // Pantalla opcional "¿Mantener la sesión iniciada?"
-    const staySignedIn = page.locator(
-      'input[type="submit"][value="Yes"], input[type="submit"][value="Sí"]'
-    );
-    if (await staySignedIn.isVisible({ timeout: 5_000 }).catch(() => false)) {
+    // Pantalla "¿Mantener la sesión iniciada?" -> clic automático en Sí/Yes (#idSIButton9)
+    const staySignedIn = page.locator('#idSIButton9');
+    if (await staySignedIn.isVisible({ timeout: 6_000 }).catch(() => false)) {
       await staySignedIn.click();
     }
 
@@ -123,8 +121,8 @@ test.describe.serial('Pruebas de Integración Cloud - AWS & Azure', () => {
       fullPage: true
     });
 
-    // Navegar a la pestaña Queues y validar API de gestión
-    await page.getByRole('link', { name: /^queues/i }).click();
+    // Navegar a la pestaña Queues and Streams y validar API de gestión
+    await page.locator('#tabs a[href="#/queues"]').click();
     await expect(page.locator('#main')).toContainText(/Name|Ready|Unacked|Total/i);
 
     const basicToken = Buffer.from(`${RABBITMQ_USER}:${RABBITMQ_PASS}`).toString('base64');
