@@ -46,7 +46,9 @@ public class JustificativoRestController {
             guardado.getId(),
             guardado.getEstudianteId(),
             null,
-            EstadoJustificativo.PENDIENTE.name()
+            EstadoJustificativo.PENDIENTE.name(),
+            guardado.getMotivo(),
+            null
         );
         auditKafkaProducer.emitirEventoAuditoria("CREACION_JUSTIFICATIVO", userId, detalles);
 
@@ -116,7 +118,9 @@ public class JustificativoRestController {
             resuelto.getId(),
             resuelto.getEstudianteId(),
             estadoAnterior,
-            estadoNuevo.name()
+            estadoNuevo.name(),
+            resuelto.getMotivo(),
+            null
         );
         auditKafkaProducer.emitirEventoAuditoria(tipoAccion, resueltoPor, detalles);
 
