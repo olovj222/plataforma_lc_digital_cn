@@ -15,6 +15,7 @@ import java.util.UUID;
 public class AuditKafkaProducer {
 
     private static final Logger log = LoggerFactory.getLogger(AuditKafkaProducer.class);
+    private static final String MARCADOR_FALLO = "SIMULAR_FALLO_AUDITORIA";
 
     private final KafkaTemplate<String, EventoAuditoriaDto> kafkaTemplate;
     private final String auditTopic;
@@ -31,7 +32,7 @@ public class AuditKafkaProducer {
 
     public void emitirEventoAuditoria(String tipoAccion, String usuarioId, DetallesAuditDto detalles) {
         String eventId = "evt-" + UUID.randomUUID();
-        String timestamp = Instant.now().toString(); // Formato ISO-8601 en UTC (ej: 2026-11-02T10:15:00Z)
+        String timestamp = Instant.now().toString();
 
         EventoAuditoriaDto evento = new EventoAuditoriaDto(
             eventId,
@@ -42,16 +43,24 @@ public class AuditKafkaProducer {
             detalles
         );
 
-        // Se usa estudianteId o justificativoId como Key para asegurar el orden por entidad en la partición
-        String partitionKey = detalles.justificativoId() != null 
-                ? String.valueOf(detalles.justificativoId()) 
+        // Se usa justificativoId como Key para mantener el orden por entidad en la partición
+        String partitionKey = (detalles != null && detalles.justificativoId() != null)
+                ? String.valueOf(detalles.justificativoId())
                 : eventId;
 
-        kafkaTemplate.send(auditTopic, partitionKey, evento)
+        // Evaluar si algún atributo dentro de DetallesAuditDto contiene el marcador de fallo
+        String topicoDestino = auditTopic;
+        if (detalles != null && detalles.toString().contains(MARCADOR_FALLO)) {
+            log.warn("Simulando fallo de auditoría. Redirigiendo evento {} directo a {}.DLT", eventId, auditTopic);
+            topicoDestino = auditTopic + ".DLT";
+        }
+
+        final String topicoFinal = topicoDestino;
+        kafkaTemplate.send(topicoFinal, partitionKey, evento)
             .whenComplete((result, ex) -> {
                 if (ex == null) {
-                    log.info("Evento de auditoria emitido a Kafka correctamente. ID: {}, Topic: {}, Particion: {}",
-                            eventId, auditTopic, result.getRecordMetadata().partition());
+                    log.info("Evento de auditoria emitido correctamente. ID: {}, Topic: {}, Particion: {}",
+                            eventId, topicoFinal, result.getRecordMetadata().partition());
                 } else {
                     log.error("Fallo al emitir evento de auditoria a Kafka. ID: {}", eventId, ex);
                 }
