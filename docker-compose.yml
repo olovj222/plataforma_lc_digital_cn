@@ -357,7 +357,7 @@ services:
       SPRING_RABBITMQ_PASSWORD: admin123
       RABBITMQ_SIMULACION_FALLOS_HABILITADA: "true"
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-1:29092,kafka-2:29092,kafka-3:29092
-      APP_KAFKA_TOPIC_AUDIT: audit-events-v1
+      APP_KAFKA_TOPIC_AUDIT: plataforma.auditoria.eventos
       APP_KAFKA_SERVICIO_ORIGEN: justificativos-service
     depends_on:
       mysql-justificativos:
