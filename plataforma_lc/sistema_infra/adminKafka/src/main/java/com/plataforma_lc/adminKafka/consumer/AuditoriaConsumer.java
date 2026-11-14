@@ -31,7 +31,11 @@ public class AuditoriaConsumer {
 
     private final AuditoriaService auditoriaService;
 
-    @KafkaListener(topics = KafkaTopics.PLATAFORMA_AUDITORIA_EVENTOS, groupId = "plataforma-auditoria-group", concurrency = "${app.kafka.consumer.concurrency:1}")
+    @KafkaListener(topics = KafkaTopics.PLATAFORMA_AUDITORIA_EVENTOS, groupId = "plataforma-auditoria-group", concurrency = "${app.kafka.consumer.concurrency:1}",properties = {
+        "spring.json.use.type.headers=false",
+        "spring.json.value.default.type=com.plataforma_lc.adminKafka.dto.AuditoriaEventDTO",
+        "spring.json.trusted.packages=*"
+    })
     public void consumir(ConsumerRecord<String, AuditoriaEventDTO> record) {
         log.info("[AUDITORIA-CONSUMER] Mensaje recibido -> topic={}, partition={}, offset={}, key={}",
                 record.topic(), record.partition(), record.offset(), record.key());
